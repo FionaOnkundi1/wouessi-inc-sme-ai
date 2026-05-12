@@ -1,5 +1,9 @@
-import testInputs from "./testInputs.json" assert { type: "json" };
+import fs from "fs";
 import { extractBusinessData } from "./extractBusinessData.js";
+
+const testInputs = JSON.parse(
+  fs.readFileSync(new URL("./testInputs.json", import.meta.url))
+);
 
 async function runTests() {
   console.log("Running AI extraction tests...\n");

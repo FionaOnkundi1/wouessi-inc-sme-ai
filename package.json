@@ -1,0 +1,24 @@
+{
+  "name": "wouessi-inc-sme-ai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test:ai": "node backend/ai/runTests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FionaOnkundi1/wouessi-inc-sme-ai.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/FionaOnkundi1/wouessi-inc-sme-ai/issues"
+  },
+  "homepage": "https://github.com/FionaOnkundi1/wouessi-inc-sme-ai#readme"
+}
