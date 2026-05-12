@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "test:ai": "node backend/ai/runTests.js"
+    "test:ai": "node backend/ai/runTests.js",
+    "test:template": "node backend/ai/runTemplateTest.js"
   },
   "repository": {
     "type": "git",
