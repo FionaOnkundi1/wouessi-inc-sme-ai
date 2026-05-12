@@ -5,138 +5,45 @@ import {
   
   import { validateBusinessData } from "./schema.js";
   
-  /**
-   * Simulated AI extraction function
-   * Later this will connect to Groq / OpenAI / Gemini
-   */
+  import { groq } from "./client.js";
+  
   export async function extractBusinessData(conversationText) {
     try {
-      // Build final prompt
+      // Build user prompt
       const userPrompt = buildExtractionPrompt(conversationText);
   
-      console.log("=== SYSTEM PROMPT ===");
-      console.log(extractionSystemPrompt);
+      // Call Groq API
+      const completion = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        temperature: 0.3,
+        response_format: {
+          type: "json_object"
+        },
+        messages: [
+          {
+            role: "system",
+            content: extractionSystemPrompt
+          },
+          {
+            role: "user",
+            content: userPrompt
+          }
+        ]
+      });
   
-      console.log("=== USER PROMPT ===");
-      console.log(userPrompt);
+      // Extract AI response text
+      const aiText =
+        completion.choices[0].message.content;
   
-      /**
-       * TEMP MOCK RESPONSE
-       * Replace later with real LLM API call
-       */
-      let mockAIResponse = {
-        businessName: "",
-        businessType: "",
-        productsOrServices: "",
-        location: "",
-        targetCustomers: "",
-        uniqueSellingPoint: "",
-        websiteVibe: "",
-        extraFeatures: "",
-        tagline: "",
-        shortDescription: "",
-        contactHint: "",
-        missingFields: [],
-        confidence: "medium"
-      };
-      
-      const lowerText = conversationText.toLowerCase();
-      
-      /**
-       * Candle business
-       */
-      if (lowerText.includes("candle")) {
-        mockAIResponse = {
-          businessName: "Melbourne Handmade Candles",
-          businessType: "Handmade candle business",
-          productsOrServices: "Handmade candles",
-          location: "Melbourne",
-          targetCustomers: "Gift and home decoration customers",
-          uniqueSellingPoint: "All candles are handmade personally",
-          websiteVibe: "warm",
-          extraFeatures: "",
-          tagline: "Handmade candles for warm spaces",
-          shortDescription:
-            "A Melbourne-based handmade candle business creating warm and thoughtful products.",
-          contactHint: "",
-          missingFields: [],
-          confidence: "high"
-        };
-      }
-      
-      /**
-       * Car washing
-       */
-      else if (lowerText.includes("car washing")) {
-        mockAIResponse = {
-          businessName: "Sydney Mobile Car Wash",
-          businessType: "Mobile car washing service",
-          productsOrServices: "Mobile car washing",
-          location: "Sydney",
-          targetCustomers: "Busy car owners",
-          uniqueSellingPoint: "Convenient mobile service",
-          websiteVibe: "modern",
-          extraFeatures: "",
-          tagline: "Professional car washing at your location",
-          shortDescription:
-            "A Sydney mobile car wash helping busy car owners keep their vehicles clean conveniently.",
-          contactHint: "",
-          missingFields: ["businessName"],
-          confidence: "high"
-        };
-      }
-      
-      /**
-       * Cakes
-       */
-      else if (lowerText.includes("cake")) {
-        mockAIResponse = {
-          businessName: "Brisbane Cake Studio",
-          businessType: "Cake business",
-          productsOrServices: "Cakes",
-          location: "Brisbane",
-          targetCustomers: "",
-          uniqueSellingPoint: "",
-          websiteVibe: "warm",
-          extraFeatures: "",
-          tagline: "Fresh cakes for every celebration",
-          shortDescription:
-            "A Brisbane cake business creating cakes for special occasions.",
-          contactHint: "",
-          missingFields: [
-            "targetCustomers",
-            "uniqueSellingPoint"
-          ],
-          confidence: "medium"
-        };
-      }
-      
-      /**
-       * Cleaning
-       */
-      else if (lowerText.includes("cleaning")) {
-        mockAIResponse = {
-          businessName: "Melbourne Flexible Cleaning",
-          businessType: "Cleaning service",
-          productsOrServices: "House and small office cleaning",
-          location: "Melbourne",
-          targetCustomers:
-            "Homeowners and small office clients",
-          uniqueSellingPoint:
-            "Flexible and affordable cleaning",
-          websiteVibe: "professional",
-          extraFeatures: "",
-          tagline: "Flexible cleaning for busy people",
-          shortDescription:
-            "A Melbourne cleaning service providing flexible and affordable cleaning solutions.",
-          contactHint: "",
-          missingFields: [],
-          confidence: "high"
-        };
-      }
+      console.log("=== RAW AI RESPONSE ===");
+      console.log(aiText);
   
-      // Validate AI output
-      const validation = validateBusinessData(mockAIResponse);
+      // Parse JSON
+      const parsedData = JSON.parse(aiText);
+  
+      // Validate schema
+      const validation =
+        validateBusinessData(parsedData);
   
       if (!validation.valid) {
         return {
@@ -147,7 +54,7 @@ import {
   
       return {
         success: true,
-        data: mockAIResponse
+        data: parsedData
       };
     } catch (error) {
       console.error("Extraction error:", error);
