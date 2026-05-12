@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id               String    @id @default(uuid())
+  status           String    @default("created")
+  conversationText String?
+  rawAnswers       Json?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  business         Business?
+  websites         Website[]
+}
+
+model Business {
+  id                 String   @id @default(uuid())
+  sessionId          String   @unique
+  businessName       String
+  businessType       String
+  productsOrServices String
+  location           String
+  targetCustomers    String
+  uniqueSellingPoint String
+  websiteVibe        String
+  extraFeatures      String
+  tagline            String
+  shortDescription   String
+  contactHint        String
+  missingFields      Json
+  confidence         String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  session            Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  websites           Website[]
+}
+
+model Website {
+  id          String    @id @default(uuid())
+  sessionId   String
+  businessId  String
+  slug        String    @unique
+  status      String    @default("preview")
+  templateId  String
+  styleTokens Json
+  siteContent Json
+  seo         Json
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  session     Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([businessId])
+  @@index([slug])
+}
