@@ -2,7 +2,7 @@
 
 AI-powered website generator prototype for small businesses.
 
-Users describe their business through voice or text, and the platform automatically extracts business information and generates a website preview.
+Users describe their business through voice or text, and the platform automatically extracts business information, selects a website design style, and generates a website preview.
 
 ---
 
@@ -20,6 +20,8 @@ Speech-to-text / conversation capture
 AI business information extraction
         ↓
 Structured JSON generation
+        ↓
+AI template + style selection
         ↓
 Website template generation
         ↓
@@ -80,6 +82,30 @@ Example output:
 
 ---
 
+# AI Template Selection System
+
+The AI template selection system decides:
+- which website template should be used
+- color palette
+- typography style
+- layout emphasis
+
+based on the extracted business information.
+
+Example output:
+
+```json
+{
+  "selectedTemplate": "warm-template",
+  "colorPalette": "warm-earth",
+  "fontPairing": "friendly-rounded",
+  "sectionEmphasis": "product-focused",
+  "reason": "Handmade candles with a warm brand vibe fit a friendly visual style."
+}
+```
+
+---
+
 # AI Features
 
 - Prompt-engineered structured extraction
@@ -89,6 +115,8 @@ Example output:
 - Business description generation
 - Missing information detection
 - Confidence scoring
+- AI-driven template selection
+- AI-driven styling decisions
 - Automated AI testing pipeline
 
 ---
@@ -100,8 +128,10 @@ Example output:
   /ai
     client.js
     extractBusinessData.js
+    templateSelection.js
     promptTemplate.js
     runTests.js
+    runTemplateTest.js
     schema.js
     testInputs.json
 
@@ -115,13 +145,15 @@ Example output:
 
 # Environment Setup
 
-## Install dependencies
+## 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-## Create environment file
+---
+
+## 2. Create environment file
 
 Create:
 
@@ -137,13 +169,58 @@ GROQ_API_KEY=your_api_key_here
 
 ---
 
-# Run AI Tests
+# How To Run
+
+## Run AI extraction tests
 
 ```bash
 npm run test:ai
 ```
 
-This runs all AI extraction test cases and validates structured outputs.
+This tests:
+- AI extraction
+- JSON validation
+- business information generation
+- missing field handling
+
+---
+
+## Run template selection tests
+
+```bash
+npm run test:template
+```
+
+This tests:
+- AI template selection
+- AI styling decisions
+- design token generation
+
+---
+
+# AI Architecture
+
+## Layer 1 — Extraction
+
+```text
+Conversation
+        ↓
+AI extraction
+        ↓
+Structured business JSON
+```
+
+---
+
+## Layer 2 — Design Intelligence
+
+```text
+Business JSON
+        ↓
+AI template/style selection
+        ↓
+Design tokens
+```
 
 ---
 
@@ -156,10 +233,10 @@ Frontend UI and microphone integration
 Backend APIs and orchestration
 
 ## Engineer 3
-AI prompts, extraction pipeline, schema validation, structured outputs
+AI prompts, extraction pipeline, template selection pipeline, schema validation, structured outputs
 
 ## Engineer 4
-Website generation and SEO integration
+Website templates and frontend rendering
 
 ## Engineer 5
 Integration testing and QA
@@ -173,6 +250,7 @@ Integration testing and QA
 - Structured JSON validation completed
 - Automated testing completed
 - Prompt engineering completed
+- AI template selection pipeline completed
 
 ---
 
@@ -184,3 +262,4 @@ Integration testing and QA
 - AI chatbot integration
 - Multi-page website generation
 - Advanced template personalization
+- Dynamic section generation
