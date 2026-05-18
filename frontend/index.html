@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wouessi Inc. Frontend Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero-section">
+      <p class="eyebrow">Wouessi Inc.</p>
+      <h1>Voice-first SME website generator</h1>
+      <p class="hero-text">
+        Speak or type your business idea, then preview a mobile-first generated website layout.
+      </p>
+    </section>
+
+    <section class="workspace">
+      <section class="input-panel card">
+        <h2>Business input</h2>
+        <p class="section-text">
+          Use the microphone or type your business description below.
+        </p>
+
+        <div class="input-actions">
+          <button id="micButton" class="primary-button" type="button">
+            Start microphone
+          </button>
+          <span id="micStatus" class="status-pill">Microphone idle</span>
+        </div>
+
+        <label for="businessInput">Business description</label>
+        <textarea id="businessInput" rows="8" placeholder="Example: I sell handmade candles in Melbourne for people buying gifts or home decoration."></textarea>
+
+        <div class="button-row">
+          <button id="generateButton" class="primary-button" type="button">
+            Generate website preview
+          </button>
+          <button id="clearButton" class="secondary-button" type="button">
+            Clear
+          </button>
+        </div>
+
+        <p id="errorMessage" class="error-message"></p>
+      </section>
+
+      <section class="preview-panel card">
+        <div class="preview-header">
+          <div>
+            <p class="eyebrow">Generated preview</p>
+            <h2 id="previewName">Melbourne Candle Studio</h2>
+          </div>
+          <span id="confidenceBadge" class="status-pill">confidence: medium</span>
+        </div>
+
+        <div id="loadingState" class="loading-state hidden">
+          Building your website preview...
+        </div>
+
+        <article id="websitePreview" class="website-preview">
+          <div class="preview-hero">
+            <p id="previewType">Handmade Candles</p>
+            <h3 id="previewTagline">Illuminate your space with love and care</h3>
+            <p id="previewDescription">
+              Handmade candles crafted with love and care, perfect for gifting or decorating your home.
+            </p>
+            <button class="preview-button" type="button">Contact business</button>
+          </div>
+
+          <div class="preview-grid">
+            <div>
+              <h4>Products / Services</h4>
+              <p id="previewProducts">Handmade Candles</p>
+            </div>
+            <div>
+              <h4>Location</h4>
+              <p id="previewLocation">Melbourne</p>
+            </div>
+            <div>
+              <h4>Target Customers</h4>
+              <p id="previewCustomers">People buying gifts or home decoration</p>
+            </div>
+            <div>
+              <h4>Unique Selling Point</h4>
+              <p id="previewUsp">Handmade by the owner</p>
+            </div>
+          </div>
+        </article>
+
+        <section class="chatbot-box">
+          <h3>Website assistant</h3>
+          <div class="chat-bubble">
+            Ask me about products, location, opening hours, or services.
+          </div>
+          <div class="chat-input-row">
+            <input type="text" placeholder="Ask a question..." />
+            <button type="button">Send</button>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
