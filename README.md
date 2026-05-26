@@ -169,3 +169,4 @@ module.exports = { populateTemplate, selectTemplate }
 | Trade | Barlow Condensed + Barlow | `#F05A28` orange | Bold, industrial, trust |
 | Food | Playfair Display + Lato | `#C4622D` terracotta | Warm, inviting, artisan |
 | Professional | Libre Baskerville + Sora | `#B8965A` gold | Sharp, editorial, refined |
+
