@@ -1,14 +1,12 @@
 // src/services/aiService.js
-// Two-path extraction:
-//   1. If VITE_ANTHROPIC_API_KEY is set → call Claude API (best results)
-//   2. Otherwise → smart local extraction from keywords (no key needed, works offline)
+// Calls Stefan's backend API for business extraction and site generation.
+// Falls back to smart local extraction if the backend is unavailable.
 
-const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages'
-const MODEL = 'claude-sonnet-4-20250514'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
 
-// ─── Local extraction (no API key required) ───────────────────────────────────
+// ─── Local fallback extraction (no backend required) ──────────────────────────
+// Kept as fallback in case Stefan's backend is down during demo
 
-// Maps keywords → category metadata
 const CATEGORY_MAP = [
   {
     keywords: ['candle', 'wax', 'wick', 'scent', 'aromatherapy'],
@@ -53,6 +51,13 @@ const CATEGORY_MAP = [
     unit: 'clients/week',
   },
   {
+    keywords: ['plumb', 'electric', 'tradie', 'trade', 'install', 'wiring', 'pipe', 'build', 'construct'],
+    tag: 'Trade Services', emoji: ['🔧', '⚡', '🏗️'],
+    products: ['Emergency Call-Out', 'Installation Service', 'Maintenance Plan'],
+    prices: ['POA', 'POA', 'From $99/mo'], bgs: ['#faeeda', '#e6f1fb', '#eaf3de'],
+    unit: 'jobs/week',
+  },
+  {
     keywords: ['tutor', 'teach', 'lesson', 'class', 'coach', 'education', 'learn', 'train'],
     tag: 'Education & Coaching', emoji: ['📚', '🎯', '🏆'],
     products: ['1-on-1 Session', 'Group Class', 'Monthly Programme'],
@@ -89,13 +94,11 @@ const DEFAULT_CATEGORY = {
   unit: 'units/week',
 }
 
-// Pulls a number (volume) from text like "50 units" or "about 30 a week"
 function extractVolume(text) {
   const match = text.match(/\b(\d+)\b/)
   return match ? match[1] : '50'
 }
 
-// Pulls a city name — looks for capitalised words after common prepositions
 function extractLocation(text) {
   const prep = text.match(/\bin\s+([A-Z][a-zA-Z\s]+?)(?:[,.]|$)/i)
   if (prep) return prep[1].trim().split(/\s+/).slice(0, 2).join(' ')
@@ -103,8 +106,7 @@ function extractLocation(text) {
   return cap ? cap[1] : 'Your City'
 }
 
-// Generates a business name from the most meaningful words
-function generateName(words, category) {
+function generateName(words) {
   const stopWords = new Set(['i', 'sell', 'make', 'run', 'do', 'we', 'a', 'an', 'the', 'in', 'at', 'and', 'or', 'about', 'per', 'week', 'my', 'our', 'is', 'am', 'are'])
   const meaningful = words.filter((w) => w.length > 2 && !stopWords.has(w.toLowerCase()))
   const adjectives = ['Fresh', 'Pure', 'Local', 'Craft', 'Swift', 'Prime', 'True', 'Fine']
@@ -118,11 +120,8 @@ function generateName(words, category) {
 function localExtract(input) {
   const lower = input.toLowerCase()
   const words = input.replace(/[^a-zA-Z\s]/g, '').trim().split(/\s+/)
-
-  // Find matching category
   const cat = CATEGORY_MAP.find((c) => c.keywords.some((k) => lower.includes(k))) || DEFAULT_CATEGORY
-
-  const name = generateName(words, cat)
+  const name = generateName(words)
   const location = extractLocation(input)
   const volume = extractVolume(input)
   const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
@@ -146,80 +145,94 @@ function localExtract(input) {
     products,
     seoTitle: `${name} — ${cat.tag} in ${location}`,
     seoDesc: `Discover ${name} in ${location}. Quality ${cat.tag.toLowerCase()} with fast turnaround and great service.`,
-    keywords: `${cat.tag.toLowerCase()} ${location}, ${words[1] || 'local'} business, ${location} services`,
+    keywords: `${cat.tag.toLowerCase()} ${location}, local business, ${location} services`,
     about: `We are ${name}, a passionate ${cat.tag.toLowerCase()} serving ${location}. Our goal is to deliver quality every time.`,
-    footerYear: '2025',
+    footerYear: String(new Date().getFullYear()),
   }
 }
 
-// ─── Anthropic API path (optional — better results) ───────────────────────────
+// ─── Map Stefan's backend response to Div's frontend data shape ───────────────
+// Stefan returns: { sessionId, businessId, businessData, siteId, siteContent, templateId, styleTokens, seo }
+// Div's frontend expects: { name, tagline, tag, desc, location, slug, volume, unit, products, seoTitle, seoDesc, keywords, about, footerYear }
 
-const SYSTEM_PROMPT = `You are a business data extraction engine. Given a short natural-language 
-description, extract structured JSON. Return ONLY a valid JSON object — no markdown fences, no preamble.`
+function mapBackendResponse(extractResult, siteResult) {
+  const sc = siteResult.siteContent
+  const bd = extractResult.businessData
 
-const USER_PROMPT = (input) => `
-Extract business details from: "${input}"
+  return {
+    // Core site content from Stefan's siteBuilder
+    name: sc.name || bd.businessName,
+    tagline: sc.tagline || bd.tagline,
+    tag: sc.tag || bd.businessType,
+    desc: sc.desc || bd.shortDescription,
+    location: sc.location || bd.location,
+    slug: sc.slug || sc.name?.toLowerCase().replace(/\s+/g, '-') || 'my-business',
+    volume: sc.volume || '50',
+    unit: sc.unit || 'units/week',
+    products: sc.products || [],
 
-Return ONLY this JSON (no markdown, no extra text):
-{
-  "name": "catchy 2-3 word business name",
-  "tagline": "compelling tagline under 8 words",
-  "tag": "category e.g. Handmade Goods, Tech Repair, Organic Food",
-  "desc": "2-sentence hero description addressing visitors",
-  "location": "City, Country",
-  "slug": "url-safe-slug",
-  "volume": "number only e.g. 50",
-  "unit": "e.g. candles/week",
-  "products": [
-    { "name": "product 1", "price": "price with symbol", "emoji": "emoji", "bg": "#hex pastel" },
-    { "name": "product 2", "price": "price", "emoji": "emoji", "bg": "#hex" },
-    { "name": "product 3", "price": "price", "emoji": "emoji", "bg": "#hex" }
-  ],
-  "seoTitle": "SEO title under 60 chars",
-  "seoDesc": "Meta description under 155 chars",
-  "keywords": "3 comma-separated keywords",
-  "about": "1-2 sentence about section",
-  "footerYear": "2025"
-}`
+    // SEO
+    seoTitle: sc.seoTitle || siteResult.seo?.title || '',
+    seoDesc: sc.seoDesc || siteResult.seo?.description || '',
+    keywords: sc.keywords || siteResult.seo?.keywords?.join(', ') || '',
 
-async function apiExtract(input) {
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY
-  const response = await fetch(ANTHROPIC_API_URL, {
+    // About
+    about: sc.about || bd.uniqueSellingPoint || '',
+    footerYear: sc.footerYear || String(new Date().getFullYear()),
+
+    // Extra fields Div's site uses
+    templateId: siteResult.templateId,
+    styleTokens: siteResult.styleTokens,
+    siteId: siteResult.siteId,
+    sessionId: extractResult.sessionId,
+  }
+}
+
+// ─── Backend API path ─────────────────────────────────────────────────────────
+async function backendExtract(conversationText) {
+  // Step 1: Extract business data
+  const extractRes = await fetch(`${API_URL}/api/extract-business-data`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 1000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: USER_PROMPT(input) }],
-    }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ conversationText })
   })
-  if (!response.ok) throw new Error(`API ${response.status}`)
-  const data = await response.json()
-  const raw = data.content.map((b) => b.text || '').join('')
-  return JSON.parse(raw.replace(/```json|```/g, '').trim())
+
+  if (!extractRes.ok) {
+    const err = await extractRes.json().catch(() => ({}))
+    throw new Error(err.message || 'Business extraction failed')
+  }
+
+  const extractResult = await extractRes.json()
+
+  // Step 2: Generate the full site
+  const siteRes = await fetch(`${API_URL}/api/generate-site`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId: extractResult.sessionId })
+  })
+
+  if (!siteRes.ok) {
+    const err = await siteRes.json().catch(() => ({}))
+    throw new Error(err.message || 'Site generation failed')
+  }
+
+  const siteResult = await siteRes.json()
+
+  // Map to Div's frontend data shape
+  return mapBackendResponse(extractResult, siteResult)
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
-
 export async function extractBusinessData(input) {
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY
-  if (apiKey && apiKey !== 'your_anthropic_api_key_here') {
-    try {
-      return await apiExtract(input)
-    } catch {
-      // Fall through to local extraction
-    }
+  try {
+    return await backendExtract(input)
+  } catch (err) {
+    console.warn('Backend unavailable, using local fallback:', err.message)
+    return localExtract(input)
   }
-  return localExtract(input)
 }
 
-// Kept for compatibility — same as localExtract
+// Kept for compatibility with App.jsx
 export function buildFallback(input) {
   return localExtract(input)
 }
