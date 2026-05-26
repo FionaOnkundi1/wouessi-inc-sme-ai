@@ -11,7 +11,9 @@ const STEPS = [
 
 export default function ProcessingScreen({ input, fromVoice }) {
   const [activeStep, setActiveStep] = useState(1)
+  const [seconds, setSeconds] = useState(0)
 
+  // Step progression
   useEffect(() => {
     const delays = fromVoice ? [0, 900, 1800, 2700] : [0, 700, 1500, 2300]
     const timers = delays.map((d, i) =>
@@ -20,9 +22,25 @@ export default function ProcessingScreen({ input, fromVoice }) {
     return () => timers.forEach(clearTimeout)
   }, [fromVoice])
 
+  // Build timer — counts up every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds((s) => s + 1)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <div className={styles.card}>
       <div className={styles.body}>
+
+        {/* Build timer */}
+        <div className={styles.timerRow}>
+          <div className={styles.timerDot} />
+          <span className={styles.timerLabel}>Building your website</span>
+          <span className={styles.timerCount}>{seconds}s</span>
+        </div>
+
         <div className={styles.steps}>
           {STEPS.map((step) => {
             const state =
@@ -44,6 +62,7 @@ export default function ProcessingScreen({ input, fromVoice }) {
             <span className={styles.heardText}>{input}</span>
           </div>
         )}
+
       </div>
     </div>
   )
