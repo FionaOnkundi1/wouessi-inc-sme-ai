@@ -5,6 +5,7 @@
 }
 
 :root {
+  /* ── App UI variables (unchanged) ── */
   --font-sans: 'Inter', sans-serif;
   --font-display: 'Inter', sans-serif;
   --black: #1a1a1a;
@@ -28,6 +29,32 @@
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-full: 9999px;
+
+  /* ── Site theme variables (set by themeService.js) ── */
+  /* These are the defaults — overridden by AI theme selection */
+  --site-primary:          #1a1a1a;
+  --site-primary-d:        #333333;
+  --site-accent:           #555555;
+  --site-bg:               #ffffff;
+  --site-surface:          #f5f5f0;
+  --site-surface-2:        #eeece8;
+  --site-text:             #1a1a1a;
+  --site-text-mid:         #666666;
+  --site-text-light:       #aaaaaa;
+  --site-border:           #e8e6e0;
+  --site-hero-from:        #f5f5f0;
+  --site-hero-to:          #eeece8;
+  --site-pill-bg:          #1a1a1a;
+  --site-pill-text:        #ffffff;
+  --site-btn-bg:           #1a1a1a;
+  --site-btn-text:         #ffffff;
+  --site-btn-ghost:        #1a1a1a;
+  --site-cta-bg:           #1a1a1a;
+  --site-cta-text:         #ffffff;
+  --site-font-sans:        'Inter', sans-serif;
+  --site-font-display:     'Inter', sans-serif;
+  --site-font-weight-display: 700;
+  --site-letter-spacing:   0;
 }
 
 html {
@@ -41,6 +68,14 @@ body {
   background: var(--gray-50);
   color: var(--black);
   min-height: 100vh;
+}
+
+/* When a generated site is showing, use site theme for body bg */
+body.theme-warm,
+body.theme-bold,
+body.theme-minimal {
+  background: var(--site-bg);
+  color: var(--site-text);
 }
 
 button {
