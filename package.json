@@ -1,29 +1,19 @@
 {
-  "name": "wouessi-inc-sme-ai",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "name": "wouessi-voice-website-generator",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test:ai": "node backend/ai/runTests.js",
-    "test:template": "node backend/ai/runTemplateTest.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/FionaOnkundi1/wouessi-inc-sme-ai.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "bugs": {
-    "url": "https://github.com/FionaOnkundi1/wouessi-inc-sme-ai/issues"
-  },
-  "homepage": "https://github.com/FionaOnkundi1/wouessi-inc-sme-ai#readme",
   "dependencies": {
-    "dotenv": "^17.4.2",
-    "openai": "^6.37.0"
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-router-dom": "^6.26.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.0",
+    "vite": "^5.4.0"
   }
 }

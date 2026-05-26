@@ -1,0 +1,99 @@
+/* Full-page takeover */
+.root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+/* Floating demo chrome bar */
+.demoBanner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  height: 40px;
+  background: rgba(26, 26, 26, 0.96);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.bannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bannerDots {
+  display: flex;
+  gap: 5px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dot.red    { background: #ff5f57; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green  { background: #28c840; }
+
+.bannerUrl {
+  font-size: 12px;
+  color: #888;
+  font-family: 'Inter', sans-serif;
+  background: rgba(255,255,255,0.07);
+  padding: 3px 12px;
+  border-radius: 4px;
+  letter-spacing: 0.2px;
+}
+
+.bannerRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.seoPill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #639922;
+  background: rgba(99,153,34,0.15);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.restartBtn {
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: #ccc;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.restartBtn:hover {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+
+/* The site itself — push down by banner height */
+.site {
+  margin-top: 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,57 @@
+.wrapper {
+  position: relative;
+}
+
+/* Edit button — hidden until hover */
+.editBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  color: #444;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.18s, transform 0.18s, background 0.12s;
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  pointer-events: none;
+}
+
+.wrapper:hover .editBtn {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.editBtn:hover {
+  background: #fff;
+  color: #1a1a1a;
+  border-color: rgba(0,0,0,0.2);
+}
+
+/* Fade transition when section content updates */
+.wrapper {
+  transition: opacity 0.25s ease;
+}
+
+.fading {
+  opacity: 0;
+  animation: fadeReplace 0.5s ease forwards;
+}
+
+@keyframes fadeReplace {
+  0%   { opacity: 0; }
+  40%  { opacity: 0; }
+  100% { opacity: 1; }
+}

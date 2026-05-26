@@ -1,0 +1,252 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 28px;
+  width: 100%;
+}
+
+.pageHeader {
+  background: #fafaf8;
+  border-bottom: 1px solid #f0ede8;
+  padding: 56px 28px 48px;
+}
+
+.eye {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #3b6d11;
+  margin-bottom: 10px;
+}
+
+.h1 {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(24px, 4vw, 38px);
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.7px;
+  margin-bottom: 12px;
+}
+
+.sub {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.7;
+  max-width: 520px;
+}
+
+.statsBar {
+  background: #fff;
+  border-bottom: 1px solid #f0ede8;
+  padding: 0 28px;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  height: 56px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statNum {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.statLabel {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.statDivider {
+  width: 1px;
+  height: 20px;
+  background: #e8e6e0;
+}
+
+.grid {
+  padding: 48px 0 64px;
+  background: #fff;
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.productCard {
+  border: 1px solid #f0ede8;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.productCard:hover {
+  box-shadow: 0 6px 28px rgba(0,0,0,0.07);
+  transform: translateY(-3px);
+}
+
+.productCard.featured {
+  border-color: #d8e8c8;
+}
+
+.featuredBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: #f0f7ec;
+  color: #3b6d11;
+  z-index: 1;
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: #e6f1fb;
+  color: #185fa5;
+  z-index: 1;
+}
+
+.productImg {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emoji {
+  font-size: 44px;
+}
+
+.productBody {
+  padding: 16px;
+  border-top: 1px solid #f0ede8;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.productName {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.productDesc {
+  font-size: 13px;
+  color: #888;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.productFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid #f0ede8;
+  margin-top: 4px;
+}
+
+.price {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.cardCta {
+  font-size: 13px;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.12s;
+}
+
+.cardCta:hover {
+  color: #1a1a1a;
+}
+
+.bottomCta {
+  background: #fafaf8;
+  border-top: 1px solid #f0ede8;
+  padding: 48px 28px;
+}
+
+.ctaBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.ctaH2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.ctaDesc {
+  font-size: 14px;
+  color: #666;
+}
+
+.ctaBtn {
+  padding: 12px 24px;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.ctaBtn:hover { opacity: 0.82; }
+
+@media (max-width: 600px) {
+  .inner { padding: 0 16px; }
+  .pageHeader { padding: 40px 16px 32px; }
+  .productGrid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 400px) {
+  .productGrid { grid-template-columns: 1fr; }
+}
