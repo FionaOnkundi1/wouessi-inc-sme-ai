@@ -5,7 +5,6 @@
   overflow: hidden;
   width: 100%;
 }
-
 .header {
   display: flex;
   align-items: center;
@@ -13,7 +12,6 @@
   padding: 14px 20px;
   border-bottom: 0.5px solid #e8e6e0;
 }
-
 .logoMark {
   width: 28px;
   height: 28px;
@@ -24,7 +22,6 @@
   justify-content: center;
   flex-shrink: 0;
 }
-
 .logoText {
   font-family: 'Inter', sans-serif;
   font-size: 15px;
@@ -32,12 +29,10 @@
   letter-spacing: -0.3px;
   color: #1a1a1a;
 }
-
 .logoText span {
   color: #888;
   font-weight: 400;
 }
-
 .badge {
   margin-left: auto;
   font-size: 11px;
@@ -47,14 +42,12 @@
   background: #f0f7ec;
   color: #3b6d11;
 }
-
 .body {
   padding: 28px 24px 24px;
   display: flex;
   flex-direction: column;
   gap: 22px;
 }
-
 .heading {
   font-family: 'Inter', sans-serif;
   font-size: 22px;
@@ -63,14 +56,12 @@
   letter-spacing: -0.5px;
   color: #1a1a1a;
 }
-
 .sub {
   font-size: 14px;
   color: #666;
   line-height: 1.6;
   margin-top: 6px;
 }
-
 .micZone {
   display: flex;
   flex-direction: column;
@@ -81,7 +72,6 @@
   border-radius: 12px;
   background: #fafaf8;
 }
-
 .micBtn {
   width: 72px;
   height: 72px;
@@ -94,34 +84,32 @@
   transition: transform 0.15s, background 0.15s;
   color: #333;
 }
-
 .micBtn:hover:not(.disabled) {
   background: #f5f5f0;
   transform: scale(1.04);
 }
-
 .micBtn:active:not(.disabled) {
   transform: scale(0.96);
 }
-
+.micBtn:focus-visible {
+  outline: 3px solid #185FA5;
+  outline-offset: 4px;
+}
 .micBtn.recording {
   border-color: #e24b4a;
   background: #fcebeb;
   color: #a32d2d;
   animation: pulseRing 1.2s ease-out infinite;
 }
-
 .micBtn.disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
-
 @keyframes pulseRing {
   0% { box-shadow: 0 0 0 0 rgba(226, 75, 74, 0.3); }
   70% { box-shadow: 0 0 0 18px rgba(226, 75, 74, 0); }
   100% { box-shadow: 0 0 0 0 rgba(226, 75, 74, 0); }
 }
-
 .micStatus {
   font-size: 13px;
   color: #888;
@@ -130,18 +118,15 @@
   line-height: 1.5;
   max-width: 280px;
 }
-
 .micActive {
   color: #a32d2d;
   font-weight: 500;
 }
-
 .micError {
   font-size: 12px;
   color: #a32d2d;
   text-align: center;
 }
-
 .divider {
   display: flex;
   align-items: center;
@@ -149,7 +134,6 @@
   font-size: 12px;
   color: #aaa;
 }
-
 .divider::before,
 .divider::after {
   content: '';
@@ -157,12 +141,10 @@
   height: 0.5px;
   background: #e8e6e0;
 }
-
 .inputRow {
   display: flex;
   gap: 8px;
 }
-
 .textInput {
   flex: 1;
   font-size: 14px;
@@ -173,11 +155,14 @@
   background: #fff;
   transition: border-color 0.15s;
 }
-
 .textInput::placeholder {
   color: #bbb;
 }
-
+.textInput:focus-visible {
+  outline: 3px solid #185FA5;
+  outline-offset: 2px;
+  border-color: #185FA5;
+}
 .goBtn {
   padding: 0 18px;
   height: 40px;
@@ -190,28 +175,27 @@
   white-space: nowrap;
   transition: opacity 0.15s;
 }
-
 .goBtn:hover:not(:disabled) {
   opacity: 0.82;
 }
-
+.goBtn:focus-visible {
+  outline: 3px solid #185FA5;
+  outline-offset: 2px;
+}
 .goBtn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
-
 .exampleLabel {
   font-size: 12px;
   color: #aaa;
   margin-bottom: 8px;
 }
-
 .chips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
-
 .chip {
   font-size: 12px;
   padding: 5px 11px;
@@ -221,9 +205,25 @@
   background: #fff;
   transition: all 0.12s;
 }
-
 .chip:hover {
   border-color: #999;
   color: #1a1a1a;
   background: #fafaf8;
+}
+.chip:focus-visible {
+  outline: 3px solid #185FA5;
+  outline-offset: 2px;
+}
+
+/* ── Screen reader only — visually hidden but accessible ── */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
