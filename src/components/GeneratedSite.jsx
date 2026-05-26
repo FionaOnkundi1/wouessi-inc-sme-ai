@@ -16,11 +16,6 @@ export default function GeneratedSite({ data, onRestart }) {
       {/* Floating demo chrome bar */}
       <div className={styles.demoBanner}>
         <div className={styles.bannerLeft}>
-          <div className={styles.bannerDots}>
-            <span className={`${styles.dot} ${styles.red}`} />
-            <span className={`${styles.dot} ${styles.yellow}`} />
-            <span className={`${styles.dot} ${styles.green}`} />
-          </div>
           <span className={styles.bannerUrl}>wouessi.site/{data.slug || 'my-business'}</span>
         </div>
         <div className={styles.bannerRight}>

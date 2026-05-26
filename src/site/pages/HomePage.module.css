@@ -15,8 +15,8 @@
   position: relative;
   padding: 80px 28px 72px;
   overflow: hidden;
-  background: #fafaf8;
-  border-bottom: 1px solid #f0ede8;
+  background: var(--site-hero-from, #fafaf8);
+  border-bottom: 1px solid var(--site-border, #f0ede8);
 }
 
 .heroInner {
@@ -38,7 +38,7 @@
   width: 500px;
   height: 500px;
   border-radius: 50%;
-  background: radial-gradient(circle, #f0f7ec 0%, transparent 70%);
+  background: radial-gradient(circle, var(--site-surface, #f0f7ec) 0%, transparent 70%);
   top: -200px;
   right: -100px;
   opacity: 0.6;
@@ -49,7 +49,7 @@
   width: 400px;
   height: 400px;
   border-radius: 50%;
-  background: radial-gradient(circle, #e6f1fb 0%, transparent 70%);
+  background: radial-gradient(circle, var(--site-surface-2, #e6f1fb) 0%, transparent 70%);
   bottom: -150px;
   left: -80px;
   opacity: 0.5;
@@ -61,25 +61,25 @@
   font-weight: 500;
   padding: 4px 12px;
   border-radius: 20px;
-  background: #f0f7ec;
-  color: #3b6d11;
+  background: var(--site-pill-bg, #1a1a1a);
+  color: var(--site-pill-text, #ffffff);
   margin-bottom: 18px;
   letter-spacing: 0.2px;
 }
 
 .h1 {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--site-font-display, 'Inter', sans-serif);
   font-size: clamp(28px, 5vw, 46px);
-  font-weight: 700;
+  font-weight: var(--site-font-weight-display, 700);
   line-height: 1.15;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
   letter-spacing: -1px;
   margin-bottom: 16px;
 }
 
 .heroDesc {
   font-size: 16px;
-  color: #666;
+  color: var(--site-text-mid, #666);
   line-height: 1.7;
   max-width: 480px;
   margin: 0 auto 28px;
@@ -94,8 +94,8 @@
 
 .btnPrimary {
   padding: 12px 26px;
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--site-btn-bg, #1a1a1a);
+  color: var(--site-btn-text, #fff);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
@@ -107,17 +107,17 @@
 
 .btnSecondary {
   padding: 12px 26px;
-  background: #fff;
-  color: #1a1a1a;
+  background: var(--site-bg, #fff);
+  color: var(--site-text, #1a1a1a);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
-  border: 1px solid #e0ddd8;
+  border: 1px solid var(--site-border, #e0ddd8);
   transition: background 0.15s;
 }
 
-.btnSecondary:hover { background: #f5f5f0; }
+.btnSecondary:hover { background: var(--site-surface, #f5f5f0); }
 
 .heroMeta {
   display: flex;
@@ -126,7 +126,7 @@
   gap: 24px;
   margin-top: 36px;
   padding-top: 28px;
-  border-top: 1px solid #ece9e3;
+  border-top: 1px solid var(--site-border, #ece9e3);
 }
 
 .metaItem {
@@ -136,29 +136,29 @@
 }
 
 .metaNum {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--site-font-display, 'Inter', sans-serif);
   font-size: 22px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--site-primary, #1a1a1a);
 }
 
 .metaLabel {
   font-size: 12px;
-  color: #aaa;
+  color: var(--site-text-light, #aaa);
   margin-top: 2px;
 }
 
 .metaDivider {
   width: 1px;
   height: 32px;
-  background: #e0ddd8;
+  background: var(--site-border, #e0ddd8);
 }
 
 /* ── Featured strip ── */
 .featuredStrip {
   padding: 64px 0;
-  background: #fff;
-  border-bottom: 1px solid #f0ede8;
+  background: var(--site-bg, #fff);
+  border-bottom: 1px solid var(--site-border, #f0ede8);
 }
 
 .stripHeader {
@@ -173,29 +173,29 @@
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #3b6d11;
+  color: var(--site-primary, #3b6d11);
   margin-bottom: 6px;
 }
 
 .h2 {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--site-font-display, 'Inter', sans-serif);
   font-size: clamp(20px, 3vw, 28px);
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
   letter-spacing: -0.4px;
 }
 
 .viewAll {
   margin-left: auto;
   font-size: 13px;
-  color: #666;
+  color: var(--site-text-mid, #666);
   text-decoration: none;
   padding-bottom: 2px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--site-border, #ccc);
   transition: color 0.12s;
 }
 
-.viewAll:hover { color: #1a1a1a; }
+.viewAll:hover { color: var(--site-text, #1a1a1a); }
 
 .productGrid {
   display: grid;
@@ -204,10 +204,10 @@
 }
 
 .productCard {
-  border: 1px solid #f0ede8;
+  border: 1px solid var(--site-border, #f0ede8);
   border-radius: 12px;
   overflow: hidden;
-  background: #fff;
+  background: var(--site-bg, #fff);
   transition: box-shadow 0.15s, transform 0.15s;
 }
 
@@ -229,19 +229,19 @@
 
 .productBody {
   padding: 12px 14px 4px;
-  border-top: 1px solid #f0ede8;
+  border-top: 1px solid var(--site-border, #f0ede8);
 }
 
 .productName {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--site-font-sans, 'Inter', sans-serif);
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
 }
 
 .productPrice {
   font-size: 13px;
-  color: #888;
+  color: var(--site-text-mid, #888);
   margin-top: 3px;
 }
 
@@ -249,21 +249,21 @@
   display: block;
   padding: 10px 14px;
   font-size: 13px;
-  color: #666;
+  color: var(--site-text-mid, #666);
   text-decoration: none;
   transition: color 0.12s, background 0.12s;
 }
 
 .productCta:hover {
-  color: #1a1a1a;
-  background: #fafaf8;
+  color: var(--site-text, #1a1a1a);
+  background: var(--site-surface, #fafaf8);
 }
 
 /* ── Features ── */
 .features {
   padding: 72px 0;
-  background: #fafaf8;
-  border-bottom: 1px solid #f0ede8;
+  background: var(--site-surface, #fafaf8);
+  border-bottom: 1px solid var(--site-border, #f0ede8);
 }
 
 .features .inner { display: flex; flex-direction: column; gap: 36px; }
@@ -275,8 +275,8 @@
 }
 
 .featureCard {
-  background: #fff;
-  border: 1px solid #f0ede8;
+  background: var(--site-bg, #fff);
+  border: 1px solid var(--site-border, #f0ede8);
   border-radius: 12px;
   padding: 24px 20px;
   transition: box-shadow 0.15s;
@@ -292,24 +292,24 @@
 }
 
 .featureTitle {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--site-font-sans, 'Inter', sans-serif);
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
   margin-bottom: 6px;
 }
 
 .featureBody {
   font-size: 13px;
-  color: #666;
+  color: var(--site-text-mid, #666);
   line-height: 1.6;
 }
 
 /* ── Testimonials ── */
 .testimonials {
   padding: 72px 0;
-  background: #fff;
-  border-bottom: 1px solid #f0ede8;
+  background: var(--site-bg, #fff);
+  border-bottom: 1px solid var(--site-border, #f0ede8);
 }
 
 .testimonials .inner { display: flex; flex-direction: column; gap: 36px; }
@@ -321,8 +321,8 @@
 }
 
 .testimonialCard {
-  background: #fafaf8;
-  border: 1px solid #f0ede8;
+  background: var(--site-surface, #fafaf8);
+  border: 1px solid var(--site-border, #f0ede8);
   border-radius: 12px;
   padding: 24px 20px;
   display: flex;
@@ -338,7 +338,7 @@
 
 .testimonialText {
   font-size: 14px;
-  color: #444;
+  color: var(--site-text-mid, #444);
   line-height: 1.7;
   flex: 1;
 }
@@ -353,9 +353,9 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #1a1a1a;
-  color: #fff;
-  font-family: 'Inter', sans-serif;
+  background: var(--site-primary, #1a1a1a);
+  color: var(--site-btn-text, #fff);
+  font-family: var(--site-font-sans, 'Inter', sans-serif);
   font-size: 14px;
   font-weight: 700;
   display: flex;
@@ -367,17 +367,17 @@
 .authorName {
   font-size: 13px;
   font-weight: 500;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
 }
 
 .authorLoc {
   font-size: 12px;
-  color: #aaa;
+  color: var(--site-text-light, #aaa);
 }
 
 /* ── CTA Banner ── */
 .cta {
-  background: #1a1a1a;
+  background: var(--site-cta-bg, #1a1a1a);
   padding: 72px 28px;
 }
 
@@ -388,17 +388,17 @@
 }
 
 .ctaH2 {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--site-font-display, 'Inter', sans-serif);
   font-size: clamp(22px, 3vw, 32px);
   font-weight: 700;
-  color: #fff;
+  color: var(--site-cta-text, #fff);
   letter-spacing: -0.5px;
   margin-bottom: 14px;
 }
 
 .ctaDesc {
   font-size: 15px;
-  color: #888;
+  color: var(--site-text-light, #888);
   line-height: 1.7;
   margin-bottom: 28px;
 }
@@ -412,8 +412,8 @@
 
 .ctaBtnPrimary {
   padding: 12px 26px;
-  background: #fff;
-  color: #1a1a1a;
+  background: var(--site-cta-text, #fff);
+  color: var(--site-cta-bg, #1a1a1a);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
@@ -426,18 +426,18 @@
 .ctaBtnGhost {
   padding: 12px 26px;
   background: transparent;
-  color: #888;
+  color: var(--site-text-light, #888);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid var(--site-border, rgba(255,255,255,0.15));
   transition: color 0.15s, border-color 0.15s;
 }
 
 .ctaBtnGhost:hover {
-  color: #fff;
-  border-color: rgba(255,255,255,0.4);
+  color: var(--site-cta-text, #fff);
+  border-color: var(--site-text-mid, rgba(255,255,255,0.4));
 }
 
 @media (max-width: 600px) {

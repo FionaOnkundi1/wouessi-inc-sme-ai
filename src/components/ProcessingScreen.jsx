@@ -22,11 +22,9 @@ export default function ProcessingScreen({ input, fromVoice }) {
     return () => timers.forEach(clearTimeout)
   }, [fromVoice])
 
-  // Build timer — counts up every second
+  // Build timer
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSeconds((s) => s + 1)
-    }, 1000)
+    const interval = setInterval(() => setSeconds((s) => s + 1), 1000)
     return () => clearInterval(interval)
   }, [])
 
@@ -36,7 +34,7 @@ export default function ProcessingScreen({ input, fromVoice }) {
 
         {/* Build timer */}
         <div className={styles.timerRow}>
-          <div className={styles.timerDot} />
+          <span className={styles.timerDot} />
           <span className={styles.timerLabel}>Building your website</span>
           <span className={styles.timerCount}>{seconds}s</span>
         </div>
@@ -62,7 +60,6 @@ export default function ProcessingScreen({ input, fromVoice }) {
             <span className={styles.heardText}>{input}</span>
           </div>
         )}
-
       </div>
     </div>
   )

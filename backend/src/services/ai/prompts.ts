@@ -83,9 +83,23 @@ Available templates:
 - bold-template
 
 Template rules:
-- minimal-template: best for elegant, simple, premium, professional, or clean businesses
+- minimal-template: best for elegant, simple, premium, professional, legal, consulting, or clean businesses
 - warm-template: best for handmade, food, wellness, beauty, family, friendly, or local businesses
-- bold-template: best for creative, modern, fitness, trade, events, youth-focused, or high-energy businesses
+- bold-template: REQUIRED for any trade, plumbing, electrical, construction, building, repair, cleaning, landscaping, or high-energy businesses
+
+Color palette rules:
+- bold-contrast: REQUIRED for trade, plumbing, electrical, construction, repair businesses — dark background with strong accent
+- clean-blue: use for tech, digital, corporate businesses
+- warm-earth: use for food, handmade, wellness businesses
+- soft-pastel: use for beauty, lifestyle, creative businesses
+- elegant-dark: use for luxury, law, finance businesses
+- neutral: use for minimal, clean, professional businesses only
+
+Font pairing rules:
+- bold-display: REQUIRED for bold-template
+- friendly-rounded: use for warm-template
+- elegant-serif: use for professional or luxury businesses
+- modern-sans: use for tech, minimal, or modern businesses
 
 If a competitorReference is provided, use it to influence template and style selection:
 - References to Wix, Squarespace → modern or minimal template

@@ -184,6 +184,9 @@ function inferPaletteFromTag(tag) {
 export function applyTheme(siteData) {
   const { styleTokens, templateId, tag } = siteData
 
+  // Force bold theme for trade businesses regardless of AI selection
+  const isTradie = /trade|plumb|electri|build|construct|repair|clean|landscape|paint|weld/i.test(tag || '')
+
   // Resolve palette — use AI selection or infer from business tag
   const paletteKey = styleTokens?.colorPalette || inferPaletteFromTag(tag)
   const fontKey = styleTokens?.fontPairing || 'modern-sans'

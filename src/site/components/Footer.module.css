@@ -1,6 +1,6 @@
 .footer {
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--site-cta-bg, #1a1a1a);
+  color: var(--site-cta-text, #fff);
   margin-top: auto;
 }
 
@@ -76,9 +76,7 @@
   transition: color 0.12s;
 }
 
-.col a:hover {
-  color: #fff;
-}
+.col a:hover { color: #fff; }
 
 .colTitle {
   font-size: 11px;

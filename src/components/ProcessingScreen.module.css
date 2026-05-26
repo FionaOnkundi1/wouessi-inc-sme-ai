@@ -1,10 +1,11 @@
 .card {
-  background: #fff;
-  border: 0.5px solid #e0ddd8;
+  background: #13131f;
+  border: 1px solid rgba(91,63,232,0.2);
   border-radius: 16px;
   overflow: hidden;
   width: 100%;
 }
+
 .body {
   padding: 56px 28px;
   display: flex;
@@ -14,6 +15,7 @@
   min-height: 340px;
   justify-content: center;
 }
+
 .steps {
   display: flex;
   flex-direction: column;
@@ -21,45 +23,46 @@
   width: 100%;
   max-width: 320px;
 }
+
 .step {
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 14px;
-  color: #ccc;
+  color: rgba(255,255,255,0.2);
   transition: color 0.3s;
 }
-.step.done {
-  color: #3b6d11;
-}
-.step.active {
-  color: #1a1a1a;
-  font-weight: 500;
-}
+
+.step.done { color: #7C5CFA; }
+.step.active { color: #fff; font-weight: 500; }
+
 .dot {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 0.5px solid #e0ddd8;
-  background: #fafaf8;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   flex-shrink: 0;
-  color: #aaa;
+  color: rgba(255,255,255,0.3);
 }
+
 .step.done .dot {
-  background: #f0f7ec;
-  border-color: #c0dd97;
-  color: #3b6d11;
+  background: rgba(91,63,232,0.2);
+  border-color: rgba(91,63,232,0.5);
+  color: #7C5CFA;
   font-weight: 600;
 }
+
 .step.active .dot {
-  background: #1a1a1a;
-  border-color: #1a1a1a;
+  background: #5B3FE8;
+  border-color: #5B3FE8;
   color: #fff;
 }
+
 .spinner {
   display: inline-block;
   width: 10px;
@@ -69,58 +72,57 @@
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 .transcriptionBox {
   width: 100%;
   max-width: 320px;
-  background: #fafaf8;
-  border: 0.5px solid #e8e6e0;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 8px;
   padding: 12px 14px;
   font-size: 13px;
   line-height: 1.6;
 }
-.heardLabel {
-  color: #aaa;
-  margin-right: 6px;
-  font-size: 12px;
-}
-.heardText {
-  color: #333;
-  font-style: italic;
-}
+
+.heardLabel { color: rgba(255,255,255,0.3); margin-right: 6px; font-size: 12px; }
+.heardText { color: rgba(255,255,255,0.7); font-style: italic; }
 
 /* ── Build timer ── */
 .timerRow {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fafaf8;
-  border: 0.5px solid #e8e6e0;
+  background: rgba(91,63,232,0.1);
+  border: 1px solid rgba(91,63,232,0.25);
   border-radius: 20px;
   padding: 6px 14px;
   font-size: 13px;
+  font-family: 'Inter', sans-serif;
 }
+
 .timerDot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #E24B4A;
-  animation: pulse 1s ease-in-out infinite;
+  background: #7C5CFA;
   flex-shrink: 0;
+  animation: pulse 1s ease-in-out infinite;
 }
+
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(0.85); }
+  50%       { opacity: 0.4; transform: scale(0.85); }
 }
+
 .timerLabel {
-  color: #666;
+  color: rgba(255,255,255,0.5);
   font-weight: 400;
 }
+
 .timerCount {
-  color: #1a1a1a;
+  color: #7C5CFA;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   margin-left: auto;

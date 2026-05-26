@@ -5,7 +5,7 @@
 }
 
 :root {
-  /* ── App UI variables (unchanged) ── */
+  /* ── App UI variables ── */
   --font-sans: 'Inter', sans-serif;
   --font-display: 'Inter', sans-serif;
   --black: #1a1a1a;
@@ -31,7 +31,6 @@
   --radius-full: 9999px;
 
   /* ── Site theme variables (set by themeService.js) ── */
-  /* These are the defaults — overridden by AI theme selection */
   --site-primary:          #1a1a1a;
   --site-primary-d:        #333333;
   --site-accent:           #555555;
@@ -63,14 +62,15 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Body is transparent — each screen/component controls its own background */
 body {
   font-family: var(--font-sans);
-  background: var(--gray-50);
+  background: transparent;
   color: var(--black);
   min-height: 100vh;
 }
 
-/* When a generated site is showing, use site theme for body bg */
+/* When a generated site is showing, use site theme */
 body.theme-warm,
 body.theme-bold,
 body.theme-minimal {

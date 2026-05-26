@@ -12,8 +12,8 @@
 }
 
 .pageHeader {
-  background: #fafaf8;
-  border-bottom: 1px solid #f0ede8;
+  background: var(--site-hero-from, #fafaf8);
+  border-bottom: 1px solid var(--site-border, #f0ede8);
   padding: 56px 28px 48px;
 }
 
@@ -22,7 +22,7 @@
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #3b6d11;
+  color: var(--site-primary, #3b6d11);
   margin-bottom: 10px;
 }
 
@@ -30,21 +30,21 @@
   font-family: 'Inter', sans-serif;
   font-size: clamp(24px, 4vw, 38px);
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
   letter-spacing: -0.7px;
   margin-bottom: 12px;
 }
 
 .sub {
   font-size: 15px;
-  color: #666;
+  color: var(--site-text-mid, #666);
   line-height: 1.7;
   max-width: 520px;
 }
 
 .statsBar {
-  background: #fff;
-  border-bottom: 1px solid #f0ede8;
+  background: var(--site-bg, #fff);
+  border-bottom: 1px solid var(--site-border, #f0ede8);
   padding: 0 28px;
 }
 
@@ -55,33 +55,26 @@
   height: 56px;
 }
 
-.stat {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.stat { display: flex; align-items: center; gap: 8px; }
 
 .statNum {
   font-family: 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--site-primary, #1a1a1a);
 }
 
-.statLabel {
-  font-size: 13px;
-  color: #aaa;
-}
+.statLabel { font-size: 13px; color: var(--site-text-light, #aaa); }
 
 .statDivider {
   width: 1px;
   height: 20px;
-  background: #e8e6e0;
+  background: var(--site-border, #e8e6e0);
 }
 
 .grid {
   padding: 48px 0 64px;
-  background: #fff;
+  background: var(--site-bg, #fff);
 }
 
 .productGrid {
@@ -91,10 +84,10 @@
 }
 
 .productCard {
-  border: 1px solid #f0ede8;
+  border: 1px solid var(--site-border, #f0ede8);
   border-radius: 14px;
   overflow: hidden;
-  background: #fff;
+  background: var(--site-bg, #fff);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -106,9 +99,7 @@
   transform: translateY(-3px);
 }
 
-.productCard.featured {
-  border-color: #d8e8c8;
-}
+.productCard.featured { border-color: var(--site-primary, #d8e8c8); }
 
 .featuredBadge {
   position: absolute;
@@ -118,8 +109,8 @@
   font-weight: 600;
   padding: 3px 9px;
   border-radius: 20px;
-  background: #f0f7ec;
-  color: #3b6d11;
+  background: var(--site-pill-bg, #1a1a1a);
+  color: var(--site-pill-text, #fff);
   z-index: 1;
 }
 
@@ -131,8 +122,8 @@
   font-weight: 600;
   padding: 3px 9px;
   border-radius: 20px;
-  background: #e6f1fb;
-  color: #185fa5;
+  background: var(--site-surface, #e6f1fb);
+  color: var(--site-primary, #185fa5);
   z-index: 1;
 }
 
@@ -143,13 +134,11 @@
   justify-content: center;
 }
 
-.emoji {
-  font-size: 44px;
-}
+.emoji { font-size: 44px; }
 
 .productBody {
   padding: 16px;
-  border-top: 1px solid #f0ede8;
+  border-top: 1px solid var(--site-border, #f0ede8);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -160,12 +149,12 @@
   font-family: 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
 }
 
 .productDesc {
   font-size: 13px;
-  color: #888;
+  color: var(--site-text-mid, #888);
   line-height: 1.6;
   flex: 1;
 }
@@ -175,7 +164,7 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 8px;
-  border-top: 1px solid #f0ede8;
+  border-top: 1px solid var(--site-border, #f0ede8);
   margin-top: 4px;
 }
 
@@ -183,23 +172,21 @@
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--site-primary, #1a1a1a);
 }
 
 .cardCta {
   font-size: 13px;
-  color: #666;
+  color: var(--site-text-mid, #666);
   text-decoration: none;
   transition: color 0.12s;
 }
 
-.cardCta:hover {
-  color: #1a1a1a;
-}
+.cardCta:hover { color: var(--site-text, #1a1a1a); }
 
 .bottomCta {
-  background: #fafaf8;
-  border-top: 1px solid #f0ede8;
+  background: var(--site-surface, #fafaf8);
+  border-top: 1px solid var(--site-border, #f0ede8);
   padding: 48px 28px;
 }
 
@@ -217,19 +204,16 @@
   font-family: 'Inter', sans-serif;
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
   margin-bottom: 4px;
 }
 
-.ctaDesc {
-  font-size: 14px;
-  color: #666;
-}
+.ctaDesc { font-size: 14px; color: var(--site-text-mid, #666); }
 
 .ctaBtn {
   padding: 12px 24px;
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--site-btn-bg, #1a1a1a);
+  color: var(--site-btn-text, #fff);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;

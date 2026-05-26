@@ -1,6 +1,7 @@
 // src/App.jsx
 import { useState } from 'react'
 import InputScreen from './components/InputScreen'
+import ConversationScreen from './components/ConversationScreen'
 import ProcessingScreen from './components/ProcessingScreen'
 import GeneratedSite from './components/GeneratedSite'
 import { extractBusinessData, buildFallback } from './services/aiService'
@@ -15,32 +16,36 @@ export default function App() {
   const [fromVoice, setFromVoice] = useState(false)
   const [siteData, setSiteData] = useState(null)
 
-  async function handleSubmit(text, isVoice = false) {
+  // Step 1 — user submits initial voice/text description
+  function handleSubmit(text, isVoice = false) {
     setInput(text)
     setFromVoice(isVoice)
+    setScreen('conversation') // go to follow-up questions
+  }
+
+  // Step 2 — user completes conversation questions
+  // fullPrompt is the enriched text built by ConversationScreen
+  async function handleConversationComplete(fullPrompt) {
     setScreen('processing')
 
     let data
     try {
       const [aiResult] = await Promise.all([
-        extractBusinessData(text).catch(() => buildFallback(text)),
+        extractBusinessData(fullPrompt).catch(() => buildFallback(fullPrompt)),
         wait(PROCESSING_DISPLAY_MS),
       ])
       data = aiResult
     } catch {
       await wait(PROCESSING_DISPLAY_MS)
-      data = buildFallback(text)
+      data = buildFallback(fullPrompt)
     }
 
-    // Apply AI-selected theme to the React app
     applyTheme(data)
-
     setSiteData(data)
     setScreen('result')
   }
 
   function handleRestart() {
-    // Reset theme back to defaults
     resetTheme()
     setSiteData(null)
     setInput('')
@@ -48,22 +53,35 @@ export default function App() {
     window.scrollTo(0, 0)
   }
 
+  // Full-page takeover for result
   if (screen === 'result' && siteData) {
     return <GeneratedSite data={siteData} onRestart={handleRestart} />
   }
 
+  // Full-page takeover for conversation
+  if (screen === 'conversation') {
+    return (
+      <ConversationScreen
+        businessInput={input}
+        onComplete={handleConversationComplete}
+      />
+    )
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.container}>
-        {screen === 'input' && (
-          <InputScreen onSubmit={(text) => handleSubmit(text, false)} />
-        )}
-        {screen === 'processing' && (
+  <>
+    {screen === 'input' && (
+      <InputScreen onSubmit={(text) => handleSubmit(text, false)} />
+    )}
+    {screen === 'processing' && (
+      <div className={styles.page}>
+        <main className={styles.container}>
           <ProcessingScreen input={input} fromVoice={fromVoice} />
-        )}
-      </main>
-    </div>
-  )
+        </main>
+      </div>
+    )}
+  </>
+)
 }
 
 function wait(ms) {
