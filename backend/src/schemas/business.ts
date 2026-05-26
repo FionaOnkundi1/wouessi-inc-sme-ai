@@ -23,6 +23,7 @@ export const businessDataSchema = z.object({
   tagline: z.string().min(1),
   shortDescription: z.string().min(1),
   contactHint: z.string().default(""),
+  competitorReference: z.string().default(""),
   missingFields: z.array(z.string()).default([]),
   confidence: z.enum(confidenceLevels)
 });
@@ -38,7 +39,8 @@ export const checklistAnswersSchema = z.object({
   location: z.string().optional(),
   contactEmail: z.string().email().optional().or(z.literal("")),
   contactPhone: z.string().optional(),
-  stylePreference: z.string().optional()
+  stylePreference: z.string().optional(),
+  competitorReference: z.string().optional()
 });
 
 export type ChecklistAnswers = z.infer<typeof checklistAnswersSchema>;
