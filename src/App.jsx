@@ -4,7 +4,6 @@ import InputScreen from './components/InputScreen'
 import ProcessingScreen from './components/ProcessingScreen'
 import GeneratedSite from './components/GeneratedSite'
 import { extractBusinessData, buildFallback } from './services/aiService'
-import { EXAMPLES } from './data/examples'
 import styles from './App.module.css'
 
 const PROCESSING_DISPLAY_MS = 3400
@@ -20,23 +19,14 @@ export default function App() {
     setFromVoice(isVoice)
     setScreen('processing')
 
-    const preset = EXAMPLES.find((ex) =>
-      text.toLowerCase().includes(ex.input.toLowerCase().split(' ').slice(0, 3).join(' ').toLowerCase()) ||
-      ex.input.toLowerCase().includes(text.toLowerCase().split(' ').slice(0, 3).join(' ').toLowerCase())
-    )
-
     let data
     try {
-      if (preset) {
-        await wait(PROCESSING_DISPLAY_MS)
-        data = preset.data
-      } else {
-        const [aiResult] = await Promise.all([
-          extractBusinessData(text).catch(() => buildFallback(text)),
-          wait(PROCESSING_DISPLAY_MS),
-        ])
-        data = aiResult
-      }
+      // Always go through Stefan's backend — no preset bypass
+      const [aiResult] = await Promise.all([
+        extractBusinessData(text).catch(() => buildFallback(text)),
+        wait(PROCESSING_DISPLAY_MS),
+      ])
+      data = aiResult
     } catch {
       await wait(PROCESSING_DISPLAY_MS)
       data = buildFallback(text)
