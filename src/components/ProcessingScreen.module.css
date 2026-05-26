@@ -5,7 +5,6 @@
   overflow: hidden;
   width: 100%;
 }
-
 .body {
   padding: 56px 28px;
   display: flex;
@@ -15,7 +14,6 @@
   min-height: 340px;
   justify-content: center;
 }
-
 .steps {
   display: flex;
   flex-direction: column;
@@ -23,7 +21,6 @@
   width: 100%;
   max-width: 320px;
 }
-
 .step {
   display: flex;
   align-items: center;
@@ -32,16 +29,13 @@
   color: #ccc;
   transition: color 0.3s;
 }
-
 .step.done {
   color: #3b6d11;
 }
-
 .step.active {
   color: #1a1a1a;
   font-weight: 500;
 }
-
 .dot {
   width: 22px;
   height: 22px;
@@ -55,20 +49,17 @@
   flex-shrink: 0;
   color: #aaa;
 }
-
 .step.done .dot {
   background: #f0f7ec;
   border-color: #c0dd97;
   color: #3b6d11;
   font-weight: 600;
 }
-
 .step.active .dot {
   background: #1a1a1a;
   border-color: #1a1a1a;
   color: #fff;
 }
-
 .spinner {
   display: inline-block;
   width: 10px;
@@ -78,11 +69,9 @@
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
-
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
 .transcriptionBox {
   width: 100%;
   max-width: 320px;
@@ -93,14 +82,48 @@
   font-size: 13px;
   line-height: 1.6;
 }
-
 .heardLabel {
   color: #aaa;
   margin-right: 6px;
   font-size: 12px;
 }
-
 .heardText {
   color: #333;
   font-style: italic;
+}
+
+/* ── Build timer ── */
+.timerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fafaf8;
+  border: 0.5px solid #e8e6e0;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+.timerDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #E24B4A;
+  animation: pulse 1s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+.timerLabel {
+  color: #666;
+  font-weight: 400;
+}
+.timerCount {
+  color: #1a1a1a;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  min-width: 28px;
+  text-align: right;
 }
