@@ -3,6 +3,7 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
+import multer from "multer";
 import { env } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFound } from "./middleware/notFound.js";
@@ -24,6 +25,10 @@ export function createApp() {
     })
   );
 
+  // Multer for audio file uploads (transcription route)
+  const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+  app.use("/api/transcribe", upload.single("audio"));
+
   app.get("/", (_req, res) => {
     res.json({
       name: "Wouessi Backend API",
@@ -37,7 +42,9 @@ export function createApp() {
         "POST /api/generate-site",
         "POST /api/generate-seo",
         "POST /api/publish-site",
-        "GET /api/sites/:siteId"
+        "GET /api/sites/:siteId",
+        "POST /api/transcribe",
+        "POST /api/chat"
       ]
     });
   });
