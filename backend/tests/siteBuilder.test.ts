@@ -16,6 +16,7 @@ const businessData: BusinessData = {
   tagline: "Handmade candles in Melbourne",
   shortDescription: "Small-batch candles made in Melbourne.",
   contactHint: "",
+  competitorReference: "",
   missingFields: [],
   confidence: "high"
 };

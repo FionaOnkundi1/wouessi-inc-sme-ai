@@ -1,12 +1,14 @@
-# Wouessi Template System
-## README for Backend Team
+# Wouessi Static Template Reference
+
+> Reference only: the HTML files in `templates/` are historical design prototypes. The running application uses the React renderer in `frontend/src/site/`; the Express backend does not populate or serve these HTML files.
+
+## Historical Prototype Contract
 
 ---
 
 ## Overview
 
-There are 4 HTML templates. Each is a fully designed, multi-page website.
-The backend team's job is to:
+There are four static HTML design references. The original prototype contract expected the backend to:
 1. Detect which template fits the AI-extracted business type
 2. Replace all `{{PLACEHOLDER}}` tokens with real AI-extracted values
 3. Serve the populated HTML

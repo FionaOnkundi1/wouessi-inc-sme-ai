@@ -42,3 +42,19 @@ export const generateSeoRequestSchema = z
 export const publishSiteRequestSchema = z.object({
   siteId: z.string().min(1)
 });
+
+export const regenerateSectionRequestSchema = z.object({
+  sectionId: z.enum([
+    "hero",
+    "features",
+    "testimonials",
+    "products",
+    "about",
+    "values",
+    "faq",
+    "contact",
+    "seo"
+  ]),
+  answers: z.string().trim().min(1).max(10_000),
+  siteData: z.record(z.unknown())
+});

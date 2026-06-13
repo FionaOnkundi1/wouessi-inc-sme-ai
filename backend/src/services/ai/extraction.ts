@@ -79,6 +79,7 @@ export function buildFallbackBusinessData(conversationText: string): BusinessDat
     tagline: `${businessType} in ${location}`,
     shortDescription: `${businessName} helps local customers with ${productsOrServices.toLowerCase()}. We focus on friendly service, clear communication, and dependable results.`,
     contactHint: "",
+    competitorReference: "",
     missingFields: ["phone number", "email address"],
     confidence: conversationText.trim().length > 80 ? "medium" : "low"
   };

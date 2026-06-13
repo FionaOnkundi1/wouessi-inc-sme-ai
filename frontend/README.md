@@ -19,4 +19,6 @@ Copy `frontend/.env.example` to `frontend/.env` for frontend-only variables:
 VITE_API_URL=http://localhost:4000
 ```
 
-If the backend is unavailable, the app falls back to local demo generation.
+If the backend is unavailable, initial website generation can fall back to local demo data. Speech transcription and editable-section regeneration require the Express backend.
+
+AI provider credentials must never be added to frontend environment variables. The frontend sends AI-assisted requests to the Express API through `VITE_API_URL`.
