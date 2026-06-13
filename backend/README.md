@@ -8,6 +8,7 @@ TypeScript Express API for the voice-first SME website generator.
 - Stores frontend checklist answers or a one-shot conversation transcript.
 - Extracts structured business data using Adrian's Groq prompt/schema contract.
 - Selects a website template and style tokens.
+- Regenerates editable website sections without exposing AI credentials to the browser.
 - Generates frontend-compatible site JSON for Fiona's React renderer.
 - Saves preview/published websites in PostgreSQL with Prisma.
 
@@ -35,6 +36,7 @@ POST /api/sessions/:sessionId/answers
 POST /api/extract-business-data
 POST /api/generate-site
 POST /api/generate-seo
+POST /api/regenerate-section
 POST /api/publish-site
 GET  /api/sites/:siteId
 ```

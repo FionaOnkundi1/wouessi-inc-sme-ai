@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { submitAnswersSchema } from "../src/schemas/api.js";
+import { regenerateSectionRequestSchema, submitAnswersSchema } from "../src/schemas/api.js";
 import { businessDataSchema } from "../src/schemas/business.js";
 
 describe("request validation", () => {
@@ -34,6 +34,26 @@ describe("request validation", () => {
         contactHint: "",
         missingFields: [],
         confidence: "certain"
+      })
+    ).toThrow();
+  });
+
+  it("accepts a section regeneration request", () => {
+    const parsed = regenerateSectionRequestSchema.parse({
+      sectionId: "hero",
+      answers: "[tagline] Reliable electrical help",
+      siteData: { name: "BrightSpark Electrical" }
+    });
+
+    expect(parsed.sectionId).toBe("hero");
+  });
+
+  it("rejects an unknown section regeneration request", () => {
+    expect(() =>
+      regenerateSectionRequestSchema.parse({
+        sectionId: "unknown",
+        answers: "Update this section",
+        siteData: {}
       })
     ).toThrow();
   });

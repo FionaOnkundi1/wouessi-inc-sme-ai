@@ -41,6 +41,7 @@ export function createApp() {
         "POST /api/extract-business-data",
         "POST /api/generate-site",
         "POST /api/generate-seo",
+        "POST /api/regenerate-section",
         "POST /api/publish-site",
         "GET /api/sites/:siteId",
         "POST /api/transcribe",

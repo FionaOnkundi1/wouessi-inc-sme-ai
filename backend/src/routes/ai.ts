@@ -5,7 +5,8 @@ import {
   extractBusinessDataRequestSchema,
   generateSeoRequestSchema,
   generateSiteRequestSchema,
-  publishSiteRequestSchema
+  publishSiteRequestSchema,
+  regenerateSectionRequestSchema
 } from "../schemas/api.js";
 import { businessDataSchema, type BusinessData } from "../schemas/business.js";
 import { answersToConversationText } from "../services/answers.js";
@@ -15,6 +16,7 @@ import { generateSeoMetadata } from "../services/seo.js";
 import { buildGeneratedSiteContent } from "../services/siteBuilder.js";
 import { buildPreviewUrl, buildPublishUrl } from "../utils/urls.js";
 import { uniqueSlug } from "../utils/slug.js";
+import { regenerateSection } from "../services/ai/sectionRegeneration.js";
 
 export const aiRouter = Router();
 
@@ -157,6 +159,23 @@ aiRouter.post("/publish-site", async (req, res, next) => {
   }
 });
 
+aiRouter.post("/regenerate-section", async (req, res, next) => {
+  try {
+    const body = regenerateSectionRequestSchema.parse(req.body);
+    const result = await regenerateSection(body.sectionId, body.answers, body.siteData);
+
+    res.json({
+      patch: result.data,
+      ai: {
+        source: result.source,
+        warnings: result.errors ?? []
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 async function resolveConversationText(body: {
   sessionId?: string;
   answers?: unknown;
@@ -237,6 +256,7 @@ function toBusinessRecord(data: BusinessData) {
     tagline: data.tagline,
     shortDescription: data.shortDescription,
     contactHint: data.contactHint,
+    competitorReference: data.competitorReference,
     missingFields: data.missingFields,
     confidence: data.confidence
   };
