@@ -50,21 +50,25 @@ model Business {
 }
 
 model Website {
-  id          String    @id @default(uuid())
-  sessionId   String
-  businessId  String
-  ownerId     String?
-  slug        String    @unique
-  status      String    @default("preview")
-  templateId  String
-  styleTokens Json
-  siteContent Json
-  seo         Json
-  publishedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  session     Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  id                   String    @id @default(uuid())
+  sessionId            String
+  businessId           String
+  ownerId              String?
+  slug                 String    @unique
+  status               String    @default("preview")
+  templateId           String
+  styleTokens          Json
+  siteContent          Json
+  seo                  Json
+  publishedTemplateId  String?
+  publishedStyleTokens Json?
+  publishedSiteContent Json?
+  publishedSeo         Json?
+  publishedAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  session              Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  business             Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   @@index([sessionId])
   @@index([businessId])

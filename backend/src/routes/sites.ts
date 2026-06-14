@@ -10,6 +10,7 @@ import {
 } from "../middleware/auth.js";
 import { claimDraftForUser } from "../services/draftOwnership.js";
 import { updateSiteRequestSchema } from "../schemas/api.js";
+import { publishOwnedSite, unpublishOwnedSite } from "../services/publishing.js";
 
 export const sitesRouter = Router();
 
@@ -91,6 +92,24 @@ sitesRouter.post("/:siteId/claim", async (req, res, next) => {
     const userId = requireSignedIn(principal);
     const result = await claimDraftForUser(req.params.siteId, userId, principal.claimToken);
     res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+sitesRouter.post("/:siteId/publish", async (req, res, next) => {
+  try {
+    const ownerId = requireSignedIn(getRequestPrincipal(req));
+    res.json(await publishOwnedSite(req.params.siteId, ownerId));
+  } catch (error) {
+    next(error);
+  }
+});
+
+sitesRouter.post("/:siteId/unpublish", async (req, res, next) => {
+  try {
+    const ownerId = requireSignedIn(getRequestPrincipal(req));
+    res.json(await unpublishOwnedSite(req.params.siteId, ownerId));
   } catch (error) {
     next(error);
   }
