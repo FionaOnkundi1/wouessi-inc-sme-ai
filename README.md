@@ -74,7 +74,7 @@ Frontend (`frontend/.env.local`):
 
 ```env
 VITE_API_URL=http://localhost:4000
-VITE_CLERK_PUBLISHABLE_KEY=pk_test_c21pbGluZy1ibHVlZ2lsbC05OS5jbGVyay5hY2NvdW50cy5kZXYk
+VITE_CLERK_PUBLISHABLE_KEY=.....
 ```
 
 Backend:
@@ -87,8 +87,8 @@ PUBLIC_BASE_URL=http://localhost:4000
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/wouessi_backend?schema=public
 GROQ_API_KEY=
 GROQ_MODEL=llama-3.3-70b-versatile
-CLERK_PUBLISHABLE_KEY=pk_test_c21pbGluZy1ibHVlZ2lsbC05OS5jbGVyay5hY2NvdW50cy5kZXYk
-CLERK_SECRET_KEY=sk_test_PUGhYL9epZ4ijkDuiBn2VCw7P0MIMnqlHKLLOSJ8SI
+CLERK_PUBLISHABLE_KEY=......
+CLERK_SECRET_KEY=......
 ```
 
 `VITE_CLERK_PUBLISHABLE_KEY` and `CLERK_PUBLISHABLE_KEY` must refer to the same Clerk application. Never expose `CLERK_SECRET_KEY` to the frontend or commit real `.env` files and API credentials.
