@@ -14,15 +14,17 @@ import { extractBusinessData } from "../services/ai/extraction.js";
 import { selectTemplateAndStyle } from "../services/ai/templateSelection.js";
 import { generateSeoMetadata } from "../services/seo.js";
 import { buildGeneratedSiteContent } from "../services/siteBuilder.js";
-import { buildPreviewUrl, buildPublishUrl } from "../utils/urls.js";
+import { buildPreviewUrl } from "../utils/urls.js";
 import { uniqueSlug } from "../utils/slug.js";
 import { regenerateSection } from "../services/ai/sectionRegeneration.js";
 import {
   assertResourceAccess,
   createOwnership,
   getRequestPrincipal,
+  requireSignedIn,
   type RequestPrincipal
 } from "../middleware/auth.js";
+import { publishOwnedSite } from "../services/publishing.js";
 
 export const aiRouter = Router();
 
@@ -164,33 +166,8 @@ aiRouter.post("/generate-seo", async (req, res, next) => {
 aiRouter.post("/publish-site", async (req, res, next) => {
   try {
     const body = publishSiteRequestSchema.parse(req.body);
-    const existingWebsite = await prisma.website.findUnique({
-      where: { id: body.siteId },
-      include: { session: true }
-    });
-    if (!existingWebsite) throw new AppError(404, "Draft was not found.");
-    assertResourceAccess(existingWebsite.session, getRequestPrincipal(req));
-
-    const website = await prisma.website.update({
-      where: { id: body.siteId },
-      data: {
-        status: "published",
-        publishedAt: new Date()
-      }
-    });
-
-    await prisma.session.update({
-      where: { id: website.sessionId },
-      data: { status: "published" }
-    });
-
-    res.json({
-      siteId: website.id,
-      slug: website.slug,
-      status: website.status,
-      previewUrl: buildPreviewUrl(website.id),
-      publishUrl: buildPublishUrl(website.slug)
-    });
+    const ownerId = requireSignedIn(getRequestPrincipal(req));
+    res.json(await publishOwnedSite(body.siteId, ownerId));
   } catch (error) {
     next(error);
   }

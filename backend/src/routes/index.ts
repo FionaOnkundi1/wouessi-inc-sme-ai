@@ -4,6 +4,7 @@ import { sessionsRouter } from "./sessions.js";
 import { sitesRouter } from "./sites.js";
 import { transcribeRouter } from "./transcribe.js";
 import { chatRouter } from "./chat.js";
+import { publicSitesRouter } from "./publicSites.js";
 
 export const apiRouter = Router();
 
@@ -14,5 +15,6 @@ apiRouter.get("/health", (_req, res) => {
 apiRouter.use("/sessions", sessionsRouter);
 apiRouter.use("/", aiRouter);
 apiRouter.use("/sites", sitesRouter);
+apiRouter.use("/public/sites", publicSitesRouter);
 apiRouter.use("/", transcribeRouter);
 apiRouter.use("/", chatRouter);

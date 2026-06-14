@@ -5,5 +5,5 @@ export function buildPreviewUrl(siteId: string): string {
 }
 
 export function buildPublishUrl(slug: string): string {
-  return `${env.PUBLIC_BASE_URL}/api/sites/${slug}`;
+  return `${env.PUBLIC_SITE_BASE_URL}/sites/${slug}`;
 }

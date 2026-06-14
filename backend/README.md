@@ -41,7 +41,9 @@ POST /api/extract-business-data
 POST /api/generate-site
 POST /api/generate-seo
 POST /api/regenerate-section
-POST /api/publish-site
+POST /api/sites/:siteId/publish
+POST /api/sites/:siteId/unpublish
+GET  /api/public/sites/:slug
 GET  /api/sites/:siteId
 PATCH /api/sites/:siteId
 POST /api/sites/:siteId/claim
@@ -53,6 +55,8 @@ Private draft requests use either a Clerk bearer token or the one-time anonymous
 Authorization: Bearer CLERK_SESSION_TOKEN
 X-Wouessi-Claim-Token: ANONYMOUS_CLAIM_TOKEN
 ```
+
+Publishing and unpublishing require the signed-in owner. The public site endpoint requires no authentication and returns only the stable snapshot created during the most recent publish action. Later draft edits remain private until the owner republishes.
 
 ## Example Flow
 
@@ -78,8 +82,6 @@ curl -X POST http://localhost:4000/api/generate-site \
 Use the returned `siteId`:
 
 ```bash
-curl -X POST http://localhost:4000/api/publish-site \
-  -H "Content-Type: application/json" \
-  -H "X-Wouessi-Claim-Token: PASTE_CLAIM_TOKEN" \
-  -d '{"siteId":"PASTE_SITE_ID"}'
+curl -X POST http://localhost:4000/api/sites/PASTE_SITE_ID/publish \
+  -H "Authorization: Bearer CLERK_SESSION_TOKEN"
 ```

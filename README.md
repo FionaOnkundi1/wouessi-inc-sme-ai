@@ -84,6 +84,7 @@ NODE_ENV=development
 PORT=4000
 FRONTEND_ORIGIN=http://localhost:5173
 PUBLIC_BASE_URL=http://localhost:4000
+PUBLIC_SITE_BASE_URL=http://localhost:3000
 DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/wouessi?schema=public
 GROQ_API_KEY=
 GROQ_MODEL=llama-3.3-70b-versatile
