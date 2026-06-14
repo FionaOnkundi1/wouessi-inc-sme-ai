@@ -1,0 +1,266 @@
+.page {
+  min-height: 100vh;
+  background: #0f0f1c;
+  color: #fff;
+  padding: 20px clamp(18px, 4vw, 52px) 64px;
+}
+
+.nav {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.logoButton {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.logo {
+  width: 84px;
+  height: auto;
+  display: block;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navLink,
+.navCta,
+.primaryBtn {
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.navLink {
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,0.62);
+  font-size: 14px;
+}
+
+.navCta {
+  border: 0;
+  padding: 10px 16px;
+  background: #5b3fe8;
+  color: #fff;
+  font-size: 13px;
+}
+
+.hero {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 72px 0 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.eyebrow {
+  width: fit-content;
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid rgba(87,214,182,0.44);
+  border-radius: 999px;
+  background: rgba(87,214,182,0.11);
+  color: #57d6b6;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.hero h1 {
+  max-width: 900px;
+  font-size: clamp(36px, 5.3vw, 70px);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.hero p {
+  max-width: 720px;
+  color: rgba(255,255,255,0.62);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.timeline {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.stepCard {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 26px;
+  padding: 28px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+}
+
+.stepNumber {
+  width: 58px;
+  height: 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #f6f2e8;
+  color: #211713;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stepBody h2 {
+  max-width: 760px;
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.stepColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.stepColumns div {
+  min-height: 142px;
+  padding: 18px;
+  border-radius: 8px;
+  background: rgba(15,15,28,0.7);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.stepColumns span {
+  display: block;
+  margin-bottom: 10px;
+  color: #a78bfa;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.stepColumns p {
+  color: rgba(255,255,255,0.64);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.noteBand {
+  max-width: 1240px;
+  margin: 74px auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(360px, 1fr);
+  gap: 42px;
+  align-items: start;
+  padding-top: 52px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.noteBand > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.noteBand h2 {
+  max-width: 560px;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.expectations {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.expectations span {
+  min-height: 112px;
+  display: flex;
+  align-items: flex-end;
+  padding: 18px;
+  border-radius: 8px;
+  background: #f6f2e8;
+  color: #211713;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.expectations span:nth-child(2) {
+  background: #e8f6f1;
+}
+
+.expectations span:nth-child(3) {
+  background: #f7ece7;
+}
+
+.expectations span:nth-child(4) {
+  background: #ece9ff;
+}
+
+.logoButton:focus-visible,
+.navLink:focus-visible,
+.navCta:focus-visible,
+.primaryBtn:focus-visible {
+  outline: 3px solid #7c5cfa;
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .stepCard,
+  .noteBand {
+    grid-template-columns: 1fr;
+  }
+
+  .stepColumns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-inline: 18px;
+  }
+
+  .nav {
+    align-items: flex-start;
+  }
+
+  .navActions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .hero {
+    padding: 44px 0 30px;
+  }
+
+  .stepCard {
+    padding: 20px;
+  }
+
+  .expectations {
+    grid-template-columns: 1fr;
+  }
+}

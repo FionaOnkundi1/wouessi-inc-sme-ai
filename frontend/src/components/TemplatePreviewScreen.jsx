@@ -1,7 +1,7 @@
 import { TEMPLATE_PREVIEWS } from '../data/templatePreviews'
 import styles from './TemplatePreviewScreen.module.css'
 
-export default function TemplatePreviewScreen({ onBack, onHome, onFeatures, onPreview }) {
+export default function TemplatePreviewScreen({ onBack, onHome, onFeatures, onHowItWorks, onPreview }) {
   return (
     <main className={styles.page}>
       <nav className={styles.nav}>
@@ -10,6 +10,7 @@ export default function TemplatePreviewScreen({ onBack, onHome, onFeatures, onPr
         </button>
         <div className={styles.navActions}>
           <button className={styles.navLinkBtn} onClick={onFeatures}>Features</button>
+          <button className={styles.navLinkBtn} onClick={onHowItWorks}>How It Works</button>
           <button className={styles.backBtn} onClick={onBack}>Back</button>
         </div>
       </nav>

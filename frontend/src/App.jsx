@@ -6,6 +6,7 @@ import ProcessingScreen from './components/ProcessingScreen'
 import GeneratedSite from './components/GeneratedSite'
 import TemplatePreviewScreen from './components/TemplatePreviewScreen'
 import FeaturesScreen from './components/FeaturesScreen'
+import HowItWorksScreen from './components/HowItWorksScreen'
 import { extractBusinessData, buildFallback } from './services/aiService'
 import { applyTheme, resetTheme } from './services/themeService'
 import { useWouessiAuth } from './auth/AuthContext'
@@ -206,6 +207,15 @@ export default function App() {
     window.scrollTo(0, 0)
   }
 
+  function handleOpenHowItWorks() {
+    resetTheme()
+    setSiteData(null)
+    setSaveState({ status: 'idle', message: '' })
+    clearDraftUrl()
+    setScreen('how-it-works')
+    window.scrollTo(0, 0)
+  }
+
   function handleOpenTemplatePreview(data) {
     applyTheme(data)
     setSiteData({ ...data, owned: false })
@@ -254,6 +264,7 @@ export default function App() {
         onBack={handleRestart}
         onHome={handleRestart}
         onFeatures={handleOpenFeatures}
+        onHowItWorks={handleOpenHowItWorks}
         onPreview={handleOpenTemplatePreview}
       />
     )
@@ -264,6 +275,18 @@ export default function App() {
       <FeaturesScreen
         onHome={handleRestart}
         onStart={handleRestart}
+        onHowItWorks={handleOpenHowItWorks}
+        onTemplates={handleOpenTemplateGallery}
+      />
+    )
+  }
+
+  if (screen === 'how-it-works') {
+    return (
+      <HowItWorksScreen
+        onHome={handleRestart}
+        onStart={handleRestart}
+        onFeatures={handleOpenFeatures}
         onTemplates={handleOpenTemplateGallery}
       />
     )
@@ -276,6 +299,7 @@ export default function App() {
         onSubmit={(text) => handleSubmit(text, false)}
         onHome={handleRestart}
         onFeatures={handleOpenFeatures}
+        onHowItWorks={handleOpenHowItWorks}
         onPreviewTemplates={handleOpenTemplateGallery}
       />
     )}

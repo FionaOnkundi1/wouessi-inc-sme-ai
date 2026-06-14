@@ -4,7 +4,7 @@ import { EXAMPLES } from '../data/examples'
 import { AuthControls } from '../auth/AuthContext'
 import styles from './InputScreen.module.css'
 
-export default function InputScreen({ onSubmit, onHome, onFeatures, onPreviewTemplates }) {
+export default function InputScreen({ onSubmit, onHome, onFeatures, onHowItWorks, onPreviewTemplates }) {
   const [business, setBusiness] = useState('')
   const [location, setLocation] = useState('')
   const [recording, setRecording] = useState(false)
@@ -81,7 +81,7 @@ export default function InputScreen({ onSubmit, onHome, onFeatures, onPreviewTem
         </button>
         <div className={styles.navLinks}>
           <button type="button" className={styles.navLinkButton} onClick={onFeatures}>Features</button>
-          <span>How It Works</span>
+          <button type="button" className={styles.navLinkButton} onClick={onHowItWorks}>How It Works</button>
           <button type="button" className={styles.navLinkButton} onClick={onPreviewTemplates}>Templates</button>
         </div>
         <AuthControls className={styles.navCta} />

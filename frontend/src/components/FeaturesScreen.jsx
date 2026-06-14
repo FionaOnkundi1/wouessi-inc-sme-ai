@@ -37,7 +37,7 @@ const BUILT_FOR = [
   'Consultants and professional services',
 ]
 
-export default function FeaturesScreen({ onHome, onStart, onTemplates }) {
+export default function FeaturesScreen({ onHome, onStart, onHowItWorks, onTemplates }) {
   return (
     <main className={styles.page}>
       <nav className={styles.nav} aria-label="Features navigation">
@@ -45,6 +45,7 @@ export default function FeaturesScreen({ onHome, onStart, onTemplates }) {
           <img src="/logo.png" alt="Wouessi Inc." className={styles.logo} />
         </button>
         <div className={styles.navActions}>
+          <button type="button" className={styles.navLink} onClick={onHowItWorks}>How It Works</button>
           <button type="button" className={styles.navLink} onClick={onTemplates}>Templates</button>
           <button type="button" className={styles.navCta} onClick={onStart}>Start building</button>
         </div>
