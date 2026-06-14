@@ -15,7 +15,13 @@ import {
 } from './services/aiService'
 import { applyTheme, resetTheme } from './services/themeService'
 import { useWouessiAuth } from './auth/AuthContext'
-import { claimDraft, loadDraft, saveDraftContent } from './services/draftService'
+import {
+  claimDraft,
+  loadDraft,
+  publishOwnedSite,
+  saveDraftContent,
+  unpublishOwnedSite,
+} from './services/draftService'
 import styles from './App.module.css'
 
 const PROCESSING_DISPLAY_MS = 3400
@@ -31,6 +37,7 @@ export default function App() {
   const [reviewError, setReviewError] = useState('')
   const [processingMode, setProcessingMode] = useState('extracting')
   const [saveState, setSaveState] = useState({ status: 'idle', message: '' })
+  const [publishState, setPublishState] = useState({ status: 'idle', message: '' })
   const [requestedDraftId, setRequestedDraftId] = useState(getDraftId)
   const restoreAttemptRef = useRef('')
 
@@ -100,6 +107,7 @@ export default function App() {
     setSaveState(nextData.owned
       ? { status: 'saved', message: 'Saved to your account' }
       : { status: 'idle', message: '' })
+    setPublishState({ status: 'idle', message: '' })
     setScreen('result')
   }
 
@@ -130,6 +138,7 @@ export default function App() {
       setSaveState(restoredData.owned
         ? { status: 'saved', message: 'Saved to your account' }
         : { status: 'idle', message: '' })
+      setPublishState({ status: 'idle', message: '' })
       setScreen('result')
     }).catch((error) => {
       if (cancelled) return
@@ -166,6 +175,12 @@ export default function App() {
       setSaveState(owned
         ? { status: 'saved', message: 'Changes saved to your account' }
         : { status: 'idle', message: 'Draft changes saved' })
+      if (owned && updatedData.status === 'published') {
+        setPublishState({
+          status: 'stale',
+          message: 'Draft changes saved. Republish to update the live website.',
+        })
+      }
     } catch (error) {
       setSaveState({ status: 'error', message: error.message })
       throw error
@@ -217,6 +232,54 @@ export default function App() {
     claimCurrentDraft()
   }
 
+  async function handlePublish() {
+    if (!siteData?.siteId || !siteData.owned || !auth.isSignedIn) {
+      setPublishState({ status: 'error', message: 'Save this website to your account before publishing.' })
+      return
+    }
+
+    const wasPublished = siteData.status === 'published'
+    setPublishState({
+      status: 'publishing',
+      message: wasPublished ? 'Updating live website…' : 'Publishing website…',
+    })
+
+    try {
+      const result = await publishOwnedSite(siteData.siteId, auth.getToken)
+      setSiteData((current) => ({ ...current, ...result, owned: true }))
+      setPublishState({
+        status: 'published',
+        message: wasPublished ? 'Live website updated.' : 'Website published.',
+      })
+    } catch (error) {
+      setPublishState({ status: 'error', message: error.message })
+    }
+  }
+
+  async function handleUnpublish() {
+    if (!siteData?.siteId || !siteData.owned || !auth.isSignedIn) return
+
+    setPublishState({ status: 'unpublishing', message: 'Taking website offline…' })
+    try {
+      const result = await unpublishOwnedSite(siteData.siteId, auth.getToken)
+      setSiteData((current) => ({ ...current, ...result, owned: true }))
+      setPublishState({ status: 'unpublished', message: 'Website is no longer public. Your draft is still saved.' })
+    } catch (error) {
+      setPublishState({ status: 'error', message: error.message })
+    }
+  }
+
+  async function handleCopyPublishUrl() {
+    if (!siteData?.publishUrl) return
+
+    try {
+      await navigator.clipboard.writeText(siteData.publishUrl)
+      setPublishState({ status: 'copied', message: 'Live website link copied.' })
+    } catch {
+      setPublishState({ status: 'error', message: 'Could not copy the link. Open the live site and copy it from the address bar.' })
+    }
+  }
+
   function handleRestart() {
     resetTheme()
     setSiteData(null)
@@ -224,6 +287,7 @@ export default function App() {
     setReviewError('')
     setInput('')
     setSaveState({ status: 'idle', message: '' })
+    setPublishState({ status: 'idle', message: '' })
     setScreen('input')
     setRequestedDraftId(null)
     clearDraftUrl()
@@ -235,6 +299,7 @@ export default function App() {
     resetTheme()
     setSiteData(null)
     setSaveState({ status: 'idle', message: '' })
+    setPublishState({ status: 'idle', message: '' })
     setScreen('dashboard')
     setRequestedDraftId(null)
     clearDraftUrl()
@@ -246,6 +311,7 @@ export default function App() {
     restoreAttemptRef.current = ''
     setSiteData(null)
     setSaveState({ status: 'idle', message: '' })
+    setPublishState({ status: 'idle', message: '' })
     setDraftUrl(siteId)
     setRequestedDraftId(siteId)
     setScreen('loading-draft')
@@ -256,6 +322,7 @@ export default function App() {
     resetTheme()
     setSiteData(null)
     setSaveState({ status: 'idle', message: '' })
+    setPublishState({ status: 'idle', message: '' })
     setRequestedDraftId(null)
     clearDraftUrl()
     clearDashboardUrl()
@@ -267,6 +334,7 @@ export default function App() {
     resetTheme()
     setSiteData(null)
     setSaveState({ status: 'idle', message: '' })
+    setPublishState({ status: 'idle', message: '' })
     clearDraftUrl()
     setScreen('features')
     window.scrollTo(0, 0)
@@ -276,6 +344,7 @@ export default function App() {
     resetTheme()
     setSiteData(null)
     setSaveState({ status: 'idle', message: '' })
+    setPublishState({ status: 'idle', message: '' })
     clearDraftUrl()
     setScreen('how-it-works')
     window.scrollTo(0, 0)
@@ -285,6 +354,7 @@ export default function App() {
     applyTheme(data)
     setSiteData({ ...data, owned: false })
     setSaveState({ status: 'idle', message: '' })
+    setPublishState({ status: 'idle', message: '' })
     setRequestedDraftId(null)
     clearDraftUrl()
     clearDashboardUrl()
@@ -302,6 +372,10 @@ export default function App() {
         onDataChange={handleSiteContentChange}
         onOpenDashboard={handleOpenDashboard}
         saveState={saveState}
+        publishState={publishState}
+        onPublish={handlePublish}
+        onUnpublish={handleUnpublish}
+        onCopyPublishUrl={handleCopyPublishUrl}
       />
     )
   }

@@ -73,7 +73,11 @@
 }
 
 .restartBtn,
-.dashboardBtn {
+.dashboardBtn,
+.copyBtn,
+.unpublishBtn,
+.liveBtn,
+.publishBtn {
   font-size: 12px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
@@ -88,6 +92,39 @@
 
 .dashboardBtn {
   color: #fff;
+}
+
+.liveBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-color: rgba(107,190,104,0.42);
+  background: rgba(70,109,25,0.3);
+  color: #b7e7a5;
+  text-decoration: none;
+}
+
+.copyBtn {
+  color: #ddd;
+}
+
+.publishBtn {
+  border-color: #7c5cfa;
+  background: #5b3fe8;
+  color: #fff;
+  font-weight: 650;
+}
+
+.unpublishBtn {
+  border-color: rgba(244,114,114,0.35);
+  background: rgba(127,29,29,0.18);
+  color: #fca5a5;
+}
+
+.publishBtn:disabled,
+.unpublishBtn:disabled {
+  cursor: default;
+  opacity: 0.68;
 }
 
 .saveBtn {
@@ -131,10 +168,43 @@
   color: #9f1239;
 }
 
+.publishMessage {
+  position: fixed;
+  top: 84px;
+  right: 16px;
+  z-index: 9999;
+  max-width: 390px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #eeeaff;
+  color: #392580;
+  font: 500 12px/1.4 'Inter', sans-serif;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.16);
+}
+
+.publishMessageError {
+  background: #feeceb;
+  color: #9f1239;
+}
+
 .restartBtn:hover,
-.dashboardBtn:hover {
+.dashboardBtn:hover,
+.copyBtn:hover {
   background: rgba(255,255,255,0.15);
   color: #fff;
+}
+
+.liveBtn:hover {
+  background: rgba(70,109,25,0.5);
+  color: #d4f5c8;
+}
+
+.publishBtn:hover:not(:disabled) {
+  background: #694bed;
+}
+
+.unpublishBtn:hover:not(:disabled) {
+  background: rgba(127,29,29,0.34);
 }
 
 /* The site itself — push down by banner height */
@@ -160,7 +230,11 @@
 
   .saveBtn,
   .dashboardBtn,
-  .restartBtn {
+  .restartBtn,
+  .copyBtn,
+  .unpublishBtn,
+  .liveBtn,
+  .publishBtn {
     padding: 5px 9px;
   }
 
@@ -172,10 +246,16 @@
   }
 
   .demoBanner {
-    justify-content: flex-end;
+    justify-content: flex-start;
+    overflow-x: auto;
   }
 
-  .saveMessage {
+  .bannerRight {
+    min-width: max-content;
+  }
+
+  .saveMessage,
+  .publishMessage {
     left: 12px;
     right: 12px;
     max-width: none;

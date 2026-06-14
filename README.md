@@ -68,7 +68,9 @@ npm run test:public-site
 - Speech transcription and editable-section regeneration require the backend.
 - Generated websites are stored as structured JSON for the React renderer.
 - Generated-site edits are persisted through the backend and restored from draft URLs after refresh.
-- The current publish endpoint marks a database record as published; real public-page rendering is not yet implemented.
+- Signed-in owners can publish, republish, unpublish, open, and copy links for their websites from the editor.
+- Publishing creates a stable snapshot. Later draft edits remain private until the owner republishes.
+- Published snapshots render as SEO-friendly Next.js pages at `PUBLIC_SITE_BASE_URL/sites/:slug`.
 
 ## Reference Templates
 

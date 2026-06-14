@@ -1,5 +1,42 @@
 # Release Notes
 
+## Phase 3 Real Public Website Publishing
+
+### Completed Features
+
+- Added signed-in owner publishing and unpublishing with stable published snapshots.
+- Added a public read-only API that exposes published snapshots only.
+- Added a Next.js App Router application for real public website pages at stable slug URLs.
+- Added page-specific titles, descriptions, keywords, canonical URLs, and Open Graph metadata.
+- Matched published website templates, colours, typography, and responsive layouts to the editor preview.
+- Added editor controls to publish, republish, unpublish, open live websites, and copy public links.
+- Added dashboard links for opening published websites.
+- Kept later draft edits private until the owner explicitly republishes.
+- Kept contact forms demo-only with explicit no-delivery messaging and no fake success behavior.
+
+### Security And Ownership
+
+- Publishing and unpublishing require the signed-in website owner.
+- Public routes do not expose draft identifiers, private draft content, claim tokens, or owner details.
+- Unpublished and legacy published records without snapshots return not found.
+- Real credentials remain excluded from tracked files.
+
+### Current Limitations
+
+- Published websites require the backend API and Next.js public renderer to be running.
+- Contact forms do not send messages and clearly direct visitors to verified contact details.
+- Custom domains, deployment automation, payments, analytics, multilingual support, and AI-generated images remain deferred.
+
+### Verification
+
+```bash
+npm run build:frontend
+npm run build:backend
+npm run build:public-site
+npm run test:backend
+npm run test:public-site
+```
+
 ## Phase 3 Security Cleanup
 
 This maintenance change prepares the application for public publishing without changing runtime behaviour.
@@ -44,13 +81,10 @@ This release stabilises the existing capstone application without adding Phase 2
 - Marked static HTML templates as design references rather than runtime code.
 - Documented frontend/backend environment boundaries and required variables.
 
-### Known Bugs And Limitations
+### Historical Phase 1 Bugs And Limitations
 
-- Generated section edits are stored only in browser memory and are lost after refresh.
-- Publishing marks a website record as published but does not render a real public website page.
-- The generated-site contact form displays a success state but does not send a message.
-- The application has no authentication, owner accounts, or dashboard.
-- Private draft ownership and access control are not implemented.
+- The items below describe the Phase 1 baseline. Authentication, persistent editing, dashboards, and public rendering were completed in later phases.
+- At the Phase 1 baseline, the generated-site contact form displayed a fake success state. Phase 3 now marks it as demo-only.
 - Initial frontend generation can silently use local demo fallback data when the backend is unavailable.
 - Some generated-site fallback content includes generic products, metrics, testimonials, or prices that have not been confirmed by the business owner.
 - Static HTML templates are not connected to the React runtime.
@@ -58,12 +92,8 @@ This release stabilises the existing capstone application without adding Phase 2
 - The backend dependency tree reports that Multer 1.x is deprecated.
 - A clean backend install currently reports six dependency vulnerabilities: three moderate, two high, and one critical. Dependency upgrades require a separately reviewed maintenance change.
 
-### Deferred Features
+### Historical Phase 1 Deferred Features
 
-- Authentication and website ownership.
-- Persistent generated-site editing.
-- User dashboard for drafts and published sites.
-- Real public website rendering and SEO-friendly Wouessi URLs.
 - Real contact-form delivery.
 - Payments and subscriptions.
 - Custom domains.

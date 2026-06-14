@@ -75,13 +75,14 @@ export default function ContactPage() {
               <h2 className={styles.colTitle}>Send a message</h2>
               {submitted ? (
                 <div className={styles.successBox}>
-                  <div className={styles.successIcon}>✓</div>
-                  <div className={styles.successTitle}>Message sent!</div>
-                  <div className={styles.successDesc}>We will get back to you within 24 hours. Thanks for reaching out.</div>
-                  <button className={styles.resetBtn} onClick={() => { setSubmitted(false); setForm({ name: '', email: '', subject: '', message: '' }) }}>Send another</button>
+                  <div className={styles.successIcon}>i</div>
+                  <div className={styles.successTitle}>Demo form only</div>
+                  <div className={styles.successDesc}>No message was sent. Visitors should contact the business using the verified details on this page.</div>
+                  <button className={styles.resetBtn} onClick={() => { setSubmitted(false); setForm({ name: '', email: '', subject: '', message: '' }) }}>Return to form</button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className={styles.form} noValidate>
+                  <p className={styles.demoNotice}>Demo preview only. This form does not send messages.</p>
                   <div className={styles.row}>
                     <div className={styles.field}>
                       <label className={styles.label}>Your name</label>
@@ -100,7 +101,7 @@ export default function ContactPage() {
                     <label className={styles.label}>Message</label>
                     <textarea className={styles.textarea} name="message" rows={5} placeholder="Tell us what you need..." value={form.message} onChange={handleChange} required />
                   </div>
-                  <button type="submit" className={styles.submitBtn} disabled={!form.name || !form.email || !form.message}>Send message →</button>
+                  <button type="submit" className={styles.submitBtn} disabled={!form.name || !form.email || !form.message}>Test demo form →</button>
                 </form>
               )}
             </div>
