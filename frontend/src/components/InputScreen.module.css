@@ -33,6 +33,18 @@
 .navLinks span { font-size: 14px; color: rgba(255,255,255,0.45); cursor: pointer; transition: color 0.15s; }
 .navLinks span:hover { color: rgba(255,255,255,0.9); }
 
+.navLinkButton {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.navLinkButton:hover { color: rgba(255,255,255,0.9); }
+
 .navCta {
   padding: 8px 18px; background: #5B3FE8; color: #fff;
   border-radius: 8px; font-size: 13px; font-weight: 600;
