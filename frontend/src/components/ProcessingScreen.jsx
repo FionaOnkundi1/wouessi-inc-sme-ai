@@ -2,25 +2,37 @@
 import { useEffect, useState } from 'react'
 import styles from './ProcessingScreen.module.css'
 
-const STEPS = [
+const GENERATION_STEPS = [
   { id: 1, label: 'Transcribing speech' },
   { id: 2, label: 'AI extracting business details' },
   { id: 3, label: 'Generating your website' },
   { id: 4, label: 'Creating SEO metadata' },
 ]
 
-export default function ProcessingScreen({ input, fromVoice }) {
+const EXTRACTION_STEPS = [
+  { id: 1, label: 'Reading your answers' },
+  { id: 2, label: 'Identifying business details' },
+  { id: 3, label: 'Preparing your review' },
+]
+
+export default function ProcessingScreen({ input, fromVoice, mode = 'generating' }) {
   const [activeStep, setActiveStep] = useState(1)
   const [seconds, setSeconds] = useState(0)
+  const steps = mode === 'extracting' ? EXTRACTION_STEPS : GENERATION_STEPS
 
   // Step progression
   useEffect(() => {
-    const delays = fromVoice ? [0, 900, 1800, 2700] : [0, 700, 1500, 2300]
+    setActiveStep(1)
+    const delays = mode === 'extracting'
+      ? [0, 500, 1100]
+      : fromVoice
+        ? [0, 900, 1800, 2700]
+        : [0, 700, 1500, 2300]
     const timers = delays.map((d, i) =>
       setTimeout(() => setActiveStep(i + 1), d)
     )
     return () => timers.forEach(clearTimeout)
-  }, [fromVoice])
+  }, [fromVoice, mode])
 
   // Build timer
   useEffect(() => {
@@ -35,12 +47,14 @@ export default function ProcessingScreen({ input, fromVoice }) {
         {/* Build timer */}
         <div className={styles.timerRow}>
           <span className={styles.timerDot} />
-          <span className={styles.timerLabel}>Building your website</span>
+          <span className={styles.timerLabel}>
+            {mode === 'extracting' ? 'Preparing your business details' : 'Building your website'}
+          </span>
           <span className={styles.timerCount}>{seconds}s</span>
         </div>
 
         <div className={styles.steps}>
-          {STEPS.map((step) => {
+          {steps.map((step) => {
             const state =
               step.id < activeStep ? 'done' : step.id === activeStep ? 'active' : 'pending'
             return (

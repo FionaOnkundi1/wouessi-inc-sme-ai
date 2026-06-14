@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  generateSiteRequestSchema,
   regenerateSectionRequestSchema,
   submitAnswersSchema,
   updateSiteRequestSchema
@@ -71,5 +72,30 @@ describe("request validation", () => {
 
     expect(parsed.siteContent.tagline).toBe("Reliable electrical help");
     expect(() => updateSiteRequestSchema.parse({ siteContent: {} })).toThrow();
+  });
+
+  it("accepts reviewed business data for an existing session", () => {
+    const parsed = generateSiteRequestSchema.parse({
+      sessionId: "a2bde8ee-3777-4919-a861-47af4e812593",
+      businessData: {
+        businessName: "BrightSpark Electrical",
+        businessType: "Electrical Services",
+        productsOrServices: "Emergency call-outs, lighting installation",
+        location: "Melbourne",
+        targetCustomers: "Homeowners",
+        uniqueSellingPoint: "Same-day emergency service",
+        websiteVibe: "bold",
+        extraFeatures: "",
+        tagline: "Reliable electrical help",
+        shortDescription: "Licensed local electricians.",
+        contactHint: "hello@brightspark.test",
+        competitorReference: "",
+        missingFields: [],
+        confidence: "high"
+      }
+    });
+
+    expect(parsed.sessionId).toBe("a2bde8ee-3777-4919-a861-47af4e812593");
+    expect(parsed.businessData?.businessName).toBe("BrightSpark Electrical");
   });
 });

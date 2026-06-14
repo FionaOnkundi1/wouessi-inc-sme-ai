@@ -243,6 +243,37 @@ async function resolveBusinessData(body: {
   ownerId: string | null;
   claimToken: string | null;
 }> {
+  if (body.sessionId && body.businessData) {
+    const session = await prisma.session.findUnique({
+      where: { id: body.sessionId }
+    });
+    if (!session) {
+      throw new AppError(404, "Draft was not found.");
+    }
+    assertResourceAccess(session, principal);
+
+    const business = await prisma.business.upsert({
+      where: { sessionId: session.id },
+      update: {
+        ...toBusinessRecord(body.businessData),
+        ownerId: session.ownerId
+      },
+      create: {
+        sessionId: session.id,
+        ownerId: session.ownerId,
+        ...toBusinessRecord(body.businessData)
+      }
+    });
+
+    return {
+      sessionId: session.id,
+      businessId: business.id,
+      businessData: body.businessData,
+      ownerId: session.ownerId,
+      claimToken: session.ownerId ? null : principal.claimToken
+    };
+  }
+
   if (body.businessData) {
     const ownership = createOwnership(principal);
     const session = await prisma.session.create({
