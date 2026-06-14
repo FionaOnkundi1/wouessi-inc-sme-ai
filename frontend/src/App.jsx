@@ -5,6 +5,7 @@ import ConversationScreen from './components/ConversationScreen'
 import ProcessingScreen from './components/ProcessingScreen'
 import GeneratedSite from './components/GeneratedSite'
 import TemplatePreviewScreen from './components/TemplatePreviewScreen'
+import FeaturesScreen from './components/FeaturesScreen'
 import { extractBusinessData, buildFallback } from './services/aiService'
 import { applyTheme, resetTheme } from './services/themeService'
 import { useWouessiAuth } from './auth/AuthContext'
@@ -196,6 +197,15 @@ export default function App() {
     window.scrollTo(0, 0)
   }
 
+  function handleOpenFeatures() {
+    resetTheme()
+    setSiteData(null)
+    setSaveState({ status: 'idle', message: '' })
+    clearDraftUrl()
+    setScreen('features')
+    window.scrollTo(0, 0)
+  }
+
   function handleOpenTemplatePreview(data) {
     applyTheme(data)
     setSiteData({ ...data, owned: false })
@@ -243,7 +253,18 @@ export default function App() {
       <TemplatePreviewScreen
         onBack={handleRestart}
         onHome={handleRestart}
+        onFeatures={handleOpenFeatures}
         onPreview={handleOpenTemplatePreview}
+      />
+    )
+  }
+
+  if (screen === 'features') {
+    return (
+      <FeaturesScreen
+        onHome={handleRestart}
+        onStart={handleRestart}
+        onTemplates={handleOpenTemplateGallery}
       />
     )
   }
@@ -254,6 +275,7 @@ export default function App() {
       <InputScreen
         onSubmit={(text) => handleSubmit(text, false)}
         onHome={handleRestart}
+        onFeatures={handleOpenFeatures}
         onPreviewTemplates={handleOpenTemplateGallery}
       />
     )}

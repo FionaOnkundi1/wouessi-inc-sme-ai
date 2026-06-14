@@ -27,6 +27,22 @@
   display: block;
 }
 
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navLinkBtn {
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,0.68);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .backBtn,
 .previewBtn {
   border: 0;
