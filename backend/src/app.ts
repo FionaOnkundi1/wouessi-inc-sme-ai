@@ -45,8 +45,10 @@ export function createApp() {
         "POST /api/generate-seo",
         "POST /api/regenerate-section",
         "POST /api/publish-site",
+        "GET /api/sites",
         "GET /api/sites/:siteId",
         "PATCH /api/sites/:siteId",
+        "DELETE /api/sites/:siteId",
         "POST /api/sites/:siteId/claim",
         "POST /api/transcribe",
         "POST /api/chat"

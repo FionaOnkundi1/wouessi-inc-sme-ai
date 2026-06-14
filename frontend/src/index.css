@@ -94,18 +94,50 @@ input, textarea, select {
 input:focus, textarea:focus {
   border-color: #999 !important;
 }
-/* Clerk authentication controls inherit the existing navigation treatment. */
 .authControls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-.authControls button {
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-weight: inherit;
-  cursor: pointer;
+.authControls .authSignInButton,
+.authControls .authDashboardButton,
+.authControls .authAccountButton {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.authControls .authSignInButton,
+.authControls .authDashboardButton {
+  background: #5b3fe8;
+}
+
+.authControls .authSignInButton:hover,
+.authControls .authDashboardButton:hover {
+  background: #6b50ed;
+}
+
+.authAccountControl {
+  min-height: 40px;
+  padding: 3px 5px 3px 2px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.authControls .authAccountButton {
+  padding: 0 9px;
+  color: rgba(255,255,255,0.78);
+}
+
+.authControls .authAccountButton:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.08);
 }

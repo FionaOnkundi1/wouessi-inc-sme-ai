@@ -34,9 +34,10 @@
 .navLinks span:hover { color: rgba(255,255,255,0.9); }
 
 .navCta {
-  padding: 8px 18px; background: #5B3FE8; color: #fff;
-  border-radius: 8px; font-size: 13px; font-weight: 600;
-  cursor: pointer; font-family: 'Inter', sans-serif;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
 }
 
 /* ── Main container: left hero + right card ── */

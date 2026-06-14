@@ -16,6 +16,7 @@ const anonymousAuth = {
   userId: null,
   getToken: async () => null,
   openSignIn: () => {},
+  openUserProfile: () => {},
 }
 
 export function AnonymousAuthProvider({ children }) {
@@ -32,12 +33,13 @@ export function ClerkAuthProvider({ children }) {
     userId: auth.userId || null,
     getToken: auth.getToken,
     openSignIn: () => clerk.openSignIn(),
+    openUserProfile: () => clerk.openUserProfile(),
   }), [auth.getToken, auth.isLoaded, auth.isSignedIn, auth.userId, clerk])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export function AuthControls({ className }) {
+export function AuthControls({ className, onOpenDashboard }) {
   const auth = useWouessiAuth()
 
   if (!auth.configured) {
@@ -52,11 +54,21 @@ export function AuthControls({ className }) {
     <div className={`${className} authControls`}>
       <Show when="signed-out">
         <SignInButton mode="modal">
-          <button type="button">Sign in</button>
+          <button className="authSignInButton" type="button">Sign in</button>
         </SignInButton>
       </Show>
       <Show when="signed-in">
-        <UserButton />
+        {onOpenDashboard && (
+          <button className="authDashboardButton" type="button" onClick={onOpenDashboard}>
+            My websites
+          </button>
+        )}
+        <div className="authAccountControl">
+          <button className="authAccountButton" type="button" onClick={auth.openUserProfile}>
+            Account
+          </button>
+          <UserButton />
+        </div>
       </Show>
     </div>
   )

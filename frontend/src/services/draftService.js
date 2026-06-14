@@ -1,5 +1,28 @@
 import { apiRequest, readApiError } from './apiClient'
 
+export async function listOwnedSites(getToken) {
+  const response = await apiRequest('/api/sites', {}, { getToken })
+
+  if (!response.ok) {
+    throw await readApiError(response, 'Could not load your saved websites.')
+  }
+
+  const result = await response.json()
+  return result.sites
+}
+
+export async function deleteOwnedSite(siteId, getToken) {
+  const response = await apiRequest(
+    `/api/sites/${siteId}`,
+    { method: 'DELETE' },
+    { getToken },
+  )
+
+  if (!response.ok) {
+    throw await readApiError(response, 'Could not delete this website.')
+  }
+}
+
 export async function claimDraft(siteId, claimToken, getToken) {
   const response = await apiRequest(
     `/api/sites/${siteId}/claim`,

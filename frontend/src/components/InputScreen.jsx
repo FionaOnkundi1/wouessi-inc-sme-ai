@@ -4,7 +4,7 @@ import { EXAMPLES } from '../data/examples'
 import { AuthControls } from '../auth/AuthContext'
 import styles from './InputScreen.module.css'
 
-export default function InputScreen({ onSubmit }) {
+export default function InputScreen({ onSubmit, onOpenDashboard }) {
   const [business, setBusiness] = useState('')
   const [location, setLocation] = useState('')
   const [recording, setRecording] = useState(false)
@@ -84,7 +84,7 @@ export default function InputScreen({ onSubmit }) {
           <span role="listitem">How It Works</span>
           <span role="listitem">Templates</span>
         </div>
-        <AuthControls className={styles.navCta} />
+        <AuthControls className={styles.navCta} onOpenDashboard={onOpenDashboard} />
       </nav>
 
       {/* MAIN CONTENT */}
