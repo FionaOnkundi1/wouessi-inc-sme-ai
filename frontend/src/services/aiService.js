@@ -9,6 +9,20 @@ import { apiRequest, readApiError } from './apiClient'
 
 const CATEGORY_MAP = [
   {
+    keywords: ['plumb', 'electric', 'tradie', 'trade', 'install', 'wiring', 'pipe', 'blocked drain', 'burst pipe', 'hot water', 'build', 'construct'],
+    tag: 'Trade Services', emoji: ['🔧', '⚡', '🏗️'],
+    products: ['Emergency Call-Out', 'Installation Service', 'Maintenance Plan'],
+    prices: ['POA', 'POA', 'From $99/mo'], bgs: ['#faeeda', '#e6f1fb', '#eaf3de'],
+    unit: 'jobs/week',
+  },
+  {
+    keywords: ['bake', 'bakery', 'bread', 'cake', 'pastry', 'cookie', 'dessert', 'sweet', 'croissant'],
+    tag: 'Bakery', emoji: ['🍞', '🎂', '🍪'],
+    products: ['Sourdough Loaf', 'Custom Cake', 'Cookie Box'],
+    prices: ['$12', '$65', '$28'], bgs: ['#faeeda', '#fbeaf0', '#e1f5ee'],
+    unit: 'items/week',
+  },
+  {
     keywords: ['candle', 'wax', 'wick', 'scent', 'aromatherapy'],
     tag: 'Handmade Goods', emoji: ['🕯️', '🌸', '🎁'],
     products: ['Soy Pillar Candle', 'Scented Collection', 'Gift Bundle'],
@@ -37,25 +51,11 @@ const CATEGORY_MAP = [
     unit: 'repairs/week',
   },
   {
-    keywords: ['bake', 'bread', 'cake', 'pastry', 'cookie', 'dessert', 'sweet'],
-    tag: 'Bakery', emoji: ['🍞', '🎂', '🍪'],
-    products: ['Sourdough Loaf', 'Custom Cake', 'Cookie Box'],
-    prices: ['$12', '$65', '$28'], bgs: ['#faeeda', '#fbeaf0', '#e1f5ee'],
-    unit: 'items/week',
-  },
-  {
     keywords: ['hair', 'salon', 'beauty', 'nail', 'barber', 'cut', 'style', 'colour'],
     tag: 'Beauty & Wellness', emoji: ['💇', '💅', '✨'],
     products: ['Haircut & Style', 'Colour Treatment', 'Full Package'],
     prices: ['$55', '$120', '$180'], bgs: ['#fbeaf0', '#e1f5ee', '#faeeda'],
     unit: 'clients/week',
-  },
-  {
-    keywords: ['plumb', 'electric', 'tradie', 'trade', 'install', 'wiring', 'pipe', 'build', 'construct'],
-    tag: 'Trade Services', emoji: ['🔧', '⚡', '🏗️'],
-    products: ['Emergency Call-Out', 'Installation Service', 'Maintenance Plan'],
-    prices: ['POA', 'POA', 'From $99/mo'], bgs: ['#faeeda', '#e6f1fb', '#eaf3de'],
-    unit: 'jobs/week',
   },
   {
     keywords: ['tutor', 'teach', 'lesson', 'class', 'coach', 'education', 'learn', 'train'],
@@ -95,49 +95,142 @@ const DEFAULT_CATEGORY = {
 }
 
 function extractVolume(text) {
-  const match = text.match(/\b(\d+)\b/)
+  const match = text.match(/\b(\d+)\s*(?:customers|clients|orders|items|jobs|repairs|sessions|shoots|pieces|boxes|candles|garments)?\s*(?:per|\/)?\s*week\b/i)
+    || text.match(/\b(?:around|about|roughly|~)\s*(\d+)\b/i)
+    || text.match(/\b(\d+)\b/)
   return match ? match[1] : '50'
 }
 
 function extractLocation(text) {
-  const prep = text.match(/\bin\s+([A-Z][a-zA-Z\s]+?)(?:[,.]|$)/i)
-  if (prep) return prep[1].trim().split(/\s+/).slice(0, 2).join(' ')
-  const cap = text.match(/\b([A-Z][a-z]{2,})\b/)
-  return cap ? cap[1] : 'Your City'
+  const prep = text.match(/\b(?:based in|located in|serving|around|in)\s+([A-Z][a-zA-Z\s]+?)(?=\s+(?:called|named)|[,.]|$)/i)
+  if (prep?.[1]) return cleanLocation(prep[1])
+  return 'Your City'
 }
 
-function generateName(words) {
-  const stopWords = new Set(['i', 'sell', 'make', 'run', 'do', 'we', 'a', 'an', 'the', 'in', 'at', 'and', 'or', 'about', 'per', 'week', 'my', 'our', 'is', 'am', 'are'])
+function cleanLocation(value) {
+  return value
+    .replace(/\b(called|named|products|services|target|customer|contact)\b.*$/i, '')
+    .trim()
+    .split(/\s+/)
+    .slice(0, 3)
+    .join(' ') || 'Your City'
+}
+
+function inferBusinessName(input, cat) {
+  const named = input.match(/\b(?:business name is|called|named|we are|i run|we run|i own|we own)\s+([A-Z][a-zA-Z&'\s]+?)(?=[,.]|(?:\s+Products\/services:)|$)/)
+  if (named?.[1]) return named[1].trim().split(/\s+/).slice(0, 4).join(' ')
+
+  const words = input.replace(/[^a-zA-Z\s]/g, '').trim().split(/\s+/)
+  const stopWords = new Set(['i', 'sell', 'make', 'run', 'own', 'do', 'we', 'a', 'an', 'the', 'in', 'at', 'and', 'or', 'about', 'per', 'week', 'my', 'our', 'is', 'am', 'are', 'called', 'based'])
   const meaningful = words.filter((w) => w.length > 2 && !stopWords.has(w.toLowerCase()))
   const adjectives = ['Fresh', 'Pure', 'Local', 'Craft', 'Swift', 'Prime', 'True', 'Fine']
   const adj = adjectives[Math.floor(Math.random() * adjectives.length)]
   const noun = meaningful[0]
     ? meaningful[0].charAt(0).toUpperCase() + meaningful[0].slice(1)
-    : 'Business'
+    : cat.tag.split(/\s+/)[0] || 'Business'
   return `${adj} ${noun}`
+}
+
+function promptField(input, label) {
+  const pattern = new RegExp(`${label}:\\s*([\\s\\S]*?)(?=\\.\\s*(?:Products\\/services|Target customer|What makes us different|Contact):|$)`, 'i')
+  return input.match(pattern)?.[1]?.trim() || ''
+}
+
+function extractSection(input, starts) {
+  for (const start of starts) {
+    const pattern = new RegExp(
+      `${start}\\s*(?::|is|are)?\\s+([\\s\\S]*?)(?=\\n|\\.\\s+(?:We complete|Our typical|Our customers|What makes|We want|The main goal|Contact|Phone|Opening hours|Open hours|Emergency call-outs|$)|$)`,
+      'i'
+    )
+    const value = input.match(pattern)?.[1]?.trim()
+    if (value) return value
+  }
+  return ''
+}
+
+function parseContact(input) {
+  const contact = promptField(input, 'Contact') || input
+  const email = contact.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || ''
+  const phone = contact.match(/(?:\+\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s-]?){2,5}\d{2,4}/)?.[0]?.trim() || ''
+  return { email, phone }
+}
+
+function parseOpenHours(input) {
+  const source = [
+    promptField(input, 'Contact'),
+    extractSection(input, ['opening hours', 'open hours', 'hours']),
+    input,
+  ].filter(Boolean).join('. ')
+  const labelled = source.match(/(?:opening hours|open hours|hours)\s*(?::|are|is)?\s*([^.;]+(?:[.;]\s*[^.;]*(?:after hours|emergency)[^.;]*)?)/i)?.[1]
+  const dayPattern = source.match(/((?:mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday)[^.;]*(?:am|pm)[^.;]*(?:after hours|emergency[^.;]*)?)/i)?.[1]
+  return cleanOpenHours(labelled || dayPattern || '')
+}
+
+function cleanOpenHours(value) {
+  return value.replace(/^(?:are|is|:|-)\s+/i, '').trim()
+}
+
+function parseOfferings(input, cat) {
+  const explicit = promptField(input, 'Products\\/services')
+  const source = explicit || inferProductsFromHomepage(input) || cat.products.join(', ')
+  const names = source
+    .split(/,|\n| and /)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 6)
+
+  while (names.length < 3) names.push(cat.products[names.length] || DEFAULT_CATEGORY.products[names.length])
+
+  return names.map((item, i) => {
+    const price = item.match(/(?:[$€£]\s?\d+(?:\.\d{2})?|\b(?:from|poa|contact us)\b[^,]*)/i)?.[0]?.trim()
+    const name = item
+      .replace(/(?:[$€£]\s?\d+(?:\.\d{2})?|\bfrom\b\s*[$€£]?\s?\d+(?:\.\d{2})?|\bpoa\b|\bcontact us\b)/ig, '')
+      .trim()
+      .replace(/\s{2,}/g, ' ')
+    return {
+      name: name || cat.products[i] || DEFAULT_CATEGORY.products[i],
+      price: price || cat.prices[i] || 'Contact us',
+      emoji: cat.emoji[i] || DEFAULT_CATEGORY.emoji[i],
+      bg: cat.bgs[i] || DEFAULT_CATEGORY.bgs[i],
+    }
+  })
+}
+
+function inferProductsFromHomepage(input) {
+  return extractSection(input, [
+    'we provide',
+    'we offer',
+    'i provide',
+    'i offer',
+    'we sell',
+    'i sell',
+    'we do',
+    'i do',
+  ]) || input.match(/(?:sell|offer|provide|make|repair|serve|do)\s+([^,.]+)/i)?.[1]?.trim() || ''
 }
 
 function localExtract(input) {
   const lower = input.toLowerCase()
-  const words = input.replace(/[^a-zA-Z\s]/g, '').trim().split(/\s+/)
   const cat = CATEGORY_MAP.find((c) => c.keywords.some((k) => lower.includes(k))) || DEFAULT_CATEGORY
-  const name = generateName(words)
+  const name = inferBusinessName(input, cat)
   const location = extractLocation(input)
   const volume = extractVolume(input)
   const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-
-  const products = cat.products.map((p, i) => ({
-    name: p,
-    price: cat.prices[i],
-    emoji: cat.emoji[i],
-    bg: cat.bgs[i],
-  }))
+  const products = parseOfferings(input, cat)
+  const targetCustomers = promptField(input, 'Target customer')
+    || extractSection(input, ['typical customers', 'customers are', 'customers'])
+    || 'local customers'
+  const uniqueSellingPoint = promptField(input, 'What makes us different')
+    || extractSection(input, ['what makes us different', 'different is', 'choose us because'])
+    || 'quality, consistency, and personal service'
+  const { email, phone } = parseContact(input)
+  const openHours = parseOpenHours(input)
 
   return {
     name,
-    tagline: `${cat.tag} — ${location}`,
+    tagline: `${name} — ${cat.tag} in ${location}`,
     tag: cat.tag,
-    desc: `${name} is a ${cat.tag.toLowerCase()} based in ${location}. We pride ourselves on quality, consistency, and personal service for every customer.`,
+    desc: `${name} is a ${cat.tag.toLowerCase()} based in ${location}, helping ${targetCustomers}. We stand out for ${uniqueSellingPoint}.`,
     location,
     slug,
     volume,
@@ -146,7 +239,12 @@ function localExtract(input) {
     seoTitle: `${name} — ${cat.tag} in ${location}`,
     seoDesc: `Discover ${name} in ${location}. Quality ${cat.tag.toLowerCase()} with fast turnaround and great service.`,
     keywords: `${cat.tag.toLowerCase()} ${location}, local business, ${location} services`,
-    about: `We are ${name}, a passionate ${cat.tag.toLowerCase()} serving ${location}. Our goal is to deliver quality every time.`,
+    about: `We are ${name}, a passionate ${cat.tag.toLowerCase()} serving ${location}. We help ${targetCustomers} with ${products.map((p) => p.name).join(', ')}. ${uniqueSellingPoint}.`,
+    targetCustomers,
+    uniqueSellingPoint,
+    contactEmail: email,
+    contactPhone: phone,
+    openHours,
     footerYear: String(new Date().getFullYear()),
   }
 }
@@ -158,6 +256,8 @@ function localExtract(input) {
 function mapBackendResponse(extractResult, siteResult) {
   const sc = siteResult.siteContent
   const bd = extractResult.businessData
+
+  const contactHint = bd.contactHint || ''
 
   return {
     // Core site content from Stefan's siteBuilder
@@ -178,6 +278,11 @@ function mapBackendResponse(extractResult, siteResult) {
 
     // About
     about: sc.about || bd.uniqueSellingPoint || '',
+    targetCustomers: sc.targetCustomers || bd.targetCustomers || '',
+    uniqueSellingPoint: sc.uniqueSellingPoint || bd.uniqueSellingPoint || '',
+    contactEmail: sc.contactEmail || bd.contactEmail || contactHint.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || '',
+    contactPhone: sc.contactPhone || bd.contactPhone || contactHint.match(/(?:\+\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s-]?){2,5}\d{2,4}/)?.[0]?.trim() || '',
+    openHours: sc.openHours || bd.openHours || parseOpenHours(contactHint) || '',
     footerYear: sc.footerYear || String(new Date().getFullYear()),
 
     // Extra fields Div's site uses

@@ -18,6 +18,16 @@ You MUST NOT invent factual business details such as:
 - exact addresses
 - social media accounts
 
+If the user provides factual contact or availability details, preserve them exactly:
+- Put phone numbers, email addresses, opening hours, service areas, and after-hours availability in "contactHint"
+- Put detailed pricing or service notes in "productsOrServices" or "extraFeatures"
+- Do not invent missing contact details or opening hours
+
+Business classification priority:
+- If the owner says they run a plumbing, electrical, construction, building, repair, cleaning, landscaping, painting, or trade business, classify by that core business, not by the customer type.
+- Example: a plumber serving cafes is still a plumbing/trade business, not a hospitality or food business.
+- For plumbing businesses, use a businessType such as "Plumbing Services" or "Trade Services" and a bold/professional websiteVibe.
+
 You SHOULD generate reasonable marketing copy for:
 - businessName if missing
 - tagline

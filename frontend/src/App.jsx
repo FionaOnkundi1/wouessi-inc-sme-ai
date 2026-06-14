@@ -5,6 +5,7 @@ import ConversationScreen from './components/ConversationScreen'
 import ProcessingScreen from './components/ProcessingScreen'
 import GeneratedSite from './components/GeneratedSite'
 import DashboardScreen from './components/DashboardScreen'
+import TemplatePreviewScreen from './components/TemplatePreviewScreen'
 import { extractBusinessData, buildFallback } from './services/aiService'
 import { applyTheme, resetTheme } from './services/themeService'
 import { useWouessiAuth } from './auth/AuthContext'
@@ -213,6 +214,28 @@ export default function App() {
     window.scrollTo(0, 0)
   }
 
+  function handleOpenTemplateGallery() {
+    resetTheme()
+    setSiteData(null)
+    setSaveState({ status: 'idle', message: '' })
+    setRequestedDraftId(null)
+    clearDraftUrl()
+    clearDashboardUrl()
+    setScreen('templates')
+    window.scrollTo(0, 0)
+  }
+
+  function handleOpenTemplatePreview(data) {
+    applyTheme(data)
+    setSiteData({ ...data, owned: false })
+    setSaveState({ status: 'idle', message: '' })
+    setRequestedDraftId(null)
+    clearDraftUrl()
+    clearDashboardUrl()
+    setScreen('result')
+    window.scrollTo(0, 0)
+  }
+
   // Full-page takeover for result
   if (screen === 'result' && siteData) {
     return (
@@ -251,12 +274,22 @@ export default function App() {
     )
   }
 
+  if (screen === 'templates') {
+    return (
+      <TemplatePreviewScreen
+        onBack={handleRestart}
+        onPreview={handleOpenTemplatePreview}
+      />
+    )
+  }
+
   return (
   <>
     {screen === 'input' && (
       <InputScreen
         onSubmit={(text) => handleSubmit(text, false)}
         onOpenDashboard={handleOpenDashboard}
+        onPreviewTemplates={handleOpenTemplateGallery}
       />
     )}
     {screen === 'processing' && (
