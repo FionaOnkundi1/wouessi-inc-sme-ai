@@ -94,3 +94,18 @@ input, textarea, select {
 input:focus, textarea:focus {
   border-color: #999 !important;
 }
+/* Clerk authentication controls inherit the existing navigation treatment. */
+.authControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.authControls button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+}

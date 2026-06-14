@@ -40,6 +40,7 @@ describe("request validation", () => {
 
   it("accepts a section regeneration request", () => {
     const parsed = regenerateSectionRequestSchema.parse({
+      siteId: "a2bde8ee-3777-4919-a861-47af4e812593",
       sectionId: "hero",
       answers: "[tagline] Reliable electrical help",
       siteData: { name: "BrightSpark Electrical" }
@@ -51,6 +52,7 @@ describe("request validation", () => {
   it("rejects an unknown section regeneration request", () => {
     expect(() =>
       regenerateSectionRequestSchema.parse({
+        siteId: "a2bde8ee-3777-4919-a861-47af4e812593",
         sectionId: "unknown",
         answers: "Update this section",
         siteData: {}

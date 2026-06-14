@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { isSpeechSupported, startSpeechSession } from '../services/speechService'
 import { EXAMPLES } from '../data/examples'
+import { AuthControls } from '../auth/AuthContext'
 import styles from './InputScreen.module.css'
 
 export default function InputScreen({ onSubmit }) {
@@ -83,7 +84,7 @@ export default function InputScreen({ onSubmit }) {
           <span role="listitem">How It Works</span>
           <span role="listitem">Templates</span>
         </div>
-        <button className={styles.navCta} aria-label="Get started with Wouessi">Get Started</button>
+        <AuthControls className={styles.navCta} />
       </nav>
 
       {/* MAIN CONTENT */}

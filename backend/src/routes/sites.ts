@@ -2,6 +2,12 @@ import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../lib/errors.js";
 import { buildPreviewUrl, buildPublishUrl } from "../utils/urls.js";
+import {
+  assertResourceAccess,
+  getRequestPrincipal,
+  requireSignedIn
+} from "../middleware/auth.js";
+import { claimDraftForUser } from "../services/draftOwnership.js";
 
 export const sitesRouter = Router();
 
@@ -13,13 +19,15 @@ sitesRouter.get("/:siteId", async (req, res, next) => {
         OR: [{ id: identifier }, { slug: identifier }]
       },
       include: {
-        business: true
+        business: true,
+        session: true
       }
     });
 
     if (!website) {
-      throw new AppError(404, "Generated site was not found.");
+      throw new AppError(404, "Draft was not found.");
     }
+    assertResourceAccess(website.session, getRequestPrincipal(req));
 
     res.json({
       siteId: website.id,
@@ -38,6 +46,17 @@ sitesRouter.get("/:siteId", async (req, res, next) => {
       createdAt: website.createdAt,
       publishedAt: website.publishedAt
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+sitesRouter.post("/:siteId/claim", async (req, res, next) => {
+  try {
+    const principal = getRequestPrincipal(req);
+    const userId = requireSignedIn(principal);
+    const result = await claimDraftForUser(req.params.siteId, userId, principal.claimToken);
+    res.json(result);
   } catch (error) {
     next(error);
   }

@@ -11,6 +11,7 @@ TypeScript Express API for the voice-first SME website generator.
 - Regenerates editable website sections without exposing AI credentials to the browser.
 - Generates frontend-compatible site JSON for Fiona's React renderer.
 - Saves preview/published websites in PostgreSQL with Prisma.
+- Assigns authenticated drafts to Clerk users and protects anonymous drafts with expiring claim tokens.
 
 ## Setup
 
@@ -27,6 +28,8 @@ The API runs at `http://localhost:4000`.
 
 If `GROQ_API_KEY` is empty, the backend uses deterministic fallback extraction and template selection so the demo flow still works locally.
 
+Clerk keys are optional for anonymous generation. Set `CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` to enable account ownership and draft claiming.
+
 ## Main Endpoints
 
 ```txt
@@ -39,6 +42,14 @@ POST /api/generate-seo
 POST /api/regenerate-section
 POST /api/publish-site
 GET  /api/sites/:siteId
+POST /api/sites/:siteId/claim
+```
+
+Private draft requests use either a Clerk bearer token or the one-time anonymous token returned during creation:
+
+```txt
+Authorization: Bearer CLERK_SESSION_TOKEN
+X-Wouessi-Claim-Token: ANONYMOUS_CLAIM_TOKEN
 ```
 
 ## Example Flow
@@ -58,6 +69,7 @@ Use the returned `sessionId`:
 ```bash
 curl -X POST http://localhost:4000/api/generate-site \
   -H "Content-Type: application/json" \
+  -H "X-Wouessi-Claim-Token: PASTE_CLAIM_TOKEN" \
   -d '{"sessionId":"PASTE_SESSION_ID"}'
 ```
 
@@ -66,5 +78,6 @@ Use the returned `siteId`:
 ```bash
 curl -X POST http://localhost:4000/api/publish-site \
   -H "Content-Type: application/json" \
+  -H "X-Wouessi-Claim-Token: PASTE_CLAIM_TOKEN" \
   -d '{"siteId":"PASTE_SITE_ID"}'
 ```

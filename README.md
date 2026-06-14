@@ -26,11 +26,11 @@ npm ci --prefix backend
 Create local environment files:
 
 ```bash
-cp frontend/.env.example frontend/.env
+cp frontend/.env.example frontend/.env.local
 cp backend/.env.example backend/.env
 ```
 
-Set `DATABASE_URL` in `backend/.env`. `GROQ_API_KEY` is optional for local fallback behavior.
+Set `DATABASE_URL` in `backend/.env`. `GROQ_API_KEY` is optional for local fallback behavior. Clerk keys are optional for anonymous generation but required to save drafts to an account.
 
 Prepare Prisma:
 
@@ -69,10 +69,11 @@ The files in `templates/` are historical static HTML prototypes used as visual r
 
 ## Environment Variables
 
-Frontend:
+Frontend (`frontend/.env.local`):
 
 ```env
 VITE_API_URL=http://localhost:4000
+VITE_CLERK_PUBLISHABLE_KEY=
 ```
 
 Backend:
@@ -85,6 +86,8 @@ PUBLIC_BASE_URL=http://localhost:4000
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/wouessi_backend?schema=public
 GROQ_API_KEY=
 GROQ_MODEL=llama-3.3-70b-versatile
+CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
 ```
 
-Never commit real `.env` files or API credentials.
+`VITE_CLERK_PUBLISHABLE_KEY` and `CLERK_PUBLISHABLE_KEY` must refer to the same Clerk application. Never expose `CLERK_SECRET_KEY` to the frontend or commit real `.env` files and API credentials.

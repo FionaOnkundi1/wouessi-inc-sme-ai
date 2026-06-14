@@ -1,15 +1,15 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+import { apiRequest, readApiError } from '../../services/apiClient'
 
-export async function regenerateSection(sectionId, answers, siteData) {
-  const response = await fetch(`${API_URL}/api/regenerate-section`, {
+export async function regenerateSection(sectionId, answers, siteData, access = {}) {
+  const { claimToken: _claimToken, owned: _owned, ...safeSiteData } = siteData
+  const response = await apiRequest('/api/regenerate-section', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sectionId, answers, siteData }),
-  })
+    body: JSON.stringify({ siteId: siteData.siteId, sectionId, answers, siteData: safeSiteData }),
+  }, access)
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}))
-    throw new Error(error.message || 'Section regeneration failed')
+    throw await readApiError(response, 'Section regeneration failed')
   }
 
   const result = await response.json()

@@ -8,19 +8,25 @@ datasource db {
 }
 
 model Session {
-  id               String    @id @default(uuid())
-  status           String    @default("created")
-  conversationText String?
-  rawAnswers       Json?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  business         Business?
-  websites         Website[]
+  id                  String    @id @default(uuid())
+  ownerId             String?
+  claimTokenHash      String?
+  claimTokenExpiresAt DateTime?
+  status              String    @default("created")
+  conversationText    String?
+  rawAnswers          Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  business            Business?
+  websites            Website[]
+
+  @@index([ownerId])
 }
 
 model Business {
   id                 String   @id @default(uuid())
   sessionId          String   @unique
+  ownerId            String?
   businessName       String
   businessType       String
   productsOrServices String
@@ -32,19 +38,22 @@ model Business {
   tagline            String
   shortDescription   String
   contactHint        String
-  competitorReference String
+  competitorReference String   @default("")
   missingFields      Json
   confidence         String
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   session            Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   websites           Website[]
+
+  @@index([ownerId])
 }
 
 model Website {
   id          String    @id @default(uuid())
   sessionId   String
   businessId  String
+  ownerId     String?
   slug        String    @unique
   status      String    @default("preview")
   templateId  String
@@ -59,5 +68,6 @@ model Website {
 
   @@index([sessionId])
   @@index([businessId])
+  @@index([ownerId])
   @@index([slug])
 }

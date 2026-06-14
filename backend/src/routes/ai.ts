@@ -17,45 +17,70 @@ import { buildGeneratedSiteContent } from "../services/siteBuilder.js";
 import { buildPreviewUrl, buildPublishUrl } from "../utils/urls.js";
 import { uniqueSlug } from "../utils/slug.js";
 import { regenerateSection } from "../services/ai/sectionRegeneration.js";
+import {
+  assertResourceAccess,
+  createOwnership,
+  getRequestPrincipal,
+  type RequestPrincipal
+} from "../middleware/auth.js";
 
 export const aiRouter = Router();
 
 aiRouter.post("/extract-business-data", async (req, res, next) => {
   try {
     const body = extractBusinessDataRequestSchema.parse(req.body);
-    const conversationText = await resolveConversationText(body);
-    const result = await extractBusinessData(conversationText);
+    const principal = getRequestPrincipal(req);
+    let session = body.sessionId
+      ? await prisma.session.findUnique({ where: { id: body.sessionId } })
+      : null;
 
-    let sessionId = body.sessionId;
-    if (!sessionId) {
-      const session = await prisma.session.create({
+    if (body.sessionId) {
+      if (!session) throw new AppError(404, "Draft was not found.");
+      assertResourceAccess(session, principal);
+    }
+
+    const conversationText = resolveConversationText(body, session?.conversationText);
+    const result = await extractBusinessData(conversationText);
+    let claimToken: string | null = null;
+
+    if (!session) {
+      const ownership = createOwnership(principal);
+      session = await prisma.session.create({
         data: {
           status: "answers_submitted",
           rawAnswers: body.answers ?? {},
-          conversationText
+          conversationText,
+          ownerId: ownership.ownerId,
+          claimTokenHash: ownership.claimTokenHash,
+          claimTokenExpiresAt: ownership.claimTokenExpiresAt
         }
       });
-      sessionId = session.id;
+      claimToken = ownership.claimToken;
     }
 
     const business = await prisma.business.upsert({
-      where: { sessionId },
-      update: toBusinessRecord(result.data),
+      where: { sessionId: session.id },
+      update: {
+        ...toBusinessRecord(result.data),
+        ownerId: session.ownerId
+      },
       create: {
-        sessionId,
+        sessionId: session.id,
+        ownerId: session.ownerId,
         ...toBusinessRecord(result.data)
       }
     });
 
     await prisma.session.update({
-      where: { id: sessionId },
+      where: { id: session.id },
       data: { status: "business_extracted" }
     });
 
     res.json({
-      sessionId,
+      sessionId: session.id,
       businessId: business.id,
       businessData: result.data,
+      claimToken,
       ai: {
         source: result.source,
         warnings: result.errors ?? []
@@ -69,7 +94,10 @@ aiRouter.post("/extract-business-data", async (req, res, next) => {
 aiRouter.post("/generate-site", async (req, res, next) => {
   try {
     const body = generateSiteRequestSchema.parse(req.body);
-    const { sessionId, businessId, businessData } = await resolveBusinessData(body);
+    const { sessionId, businessId, businessData, ownerId, claimToken } = await resolveBusinessData(
+      body,
+      getRequestPrincipal(req)
+    );
     const templateResult = await selectTemplateAndStyle(businessData);
     const seo = generateSeoMetadata(businessData);
     const siteContent = buildGeneratedSiteContent(businessData, templateResult.data, seo);
@@ -79,6 +107,7 @@ aiRouter.post("/generate-site", async (req, res, next) => {
       data: {
         sessionId,
         businessId,
+        ownerId,
         slug,
         status: "preview",
         templateId: templateResult.data.selectedTemplate,
@@ -102,6 +131,7 @@ aiRouter.post("/generate-site", async (req, res, next) => {
       seo,
       previewUrl: buildPreviewUrl(website.id),
       publishUrl: null,
+      claimToken,
       ai: {
         source: templateResult.source,
         warnings: templateResult.errors ?? []
@@ -115,7 +145,7 @@ aiRouter.post("/generate-site", async (req, res, next) => {
 aiRouter.post("/generate-seo", async (req, res, next) => {
   try {
     const body = generateSeoRequestSchema.parse(req.body);
-    const businessData = await resolveBusinessDataForSeo(body);
+    const businessData = await resolveBusinessDataForSeo(body, getRequestPrincipal(req));
     const seo = generateSeoMetadata(businessData);
 
     if (body.websiteId) {
@@ -134,6 +164,13 @@ aiRouter.post("/generate-seo", async (req, res, next) => {
 aiRouter.post("/publish-site", async (req, res, next) => {
   try {
     const body = publishSiteRequestSchema.parse(req.body);
+    const existingWebsite = await prisma.website.findUnique({
+      where: { id: body.siteId },
+      include: { session: true }
+    });
+    if (!existingWebsite) throw new AppError(404, "Draft was not found.");
+    assertResourceAccess(existingWebsite.session, getRequestPrincipal(req));
+
     const website = await prisma.website.update({
       where: { id: body.siteId },
       data: {
@@ -162,6 +199,13 @@ aiRouter.post("/publish-site", async (req, res, next) => {
 aiRouter.post("/regenerate-section", async (req, res, next) => {
   try {
     const body = regenerateSectionRequestSchema.parse(req.body);
+    const website = await prisma.website.findUnique({
+      where: { id: body.siteId },
+      include: { session: true }
+    });
+    if (!website) throw new AppError(404, "Draft was not found.");
+    assertResourceAccess(website.session, getRequestPrincipal(req));
+
     const result = await regenerateSection(body.sectionId, body.answers, body.siteData);
 
     res.json({
@@ -176,34 +220,53 @@ aiRouter.post("/regenerate-section", async (req, res, next) => {
   }
 });
 
-async function resolveConversationText(body: {
+function resolveConversationText(body: {
   sessionId?: string;
   answers?: unknown;
   conversationText?: string;
-}): Promise<string> {
+}, storedConversationText?: string | null): string {
   if (body.conversationText) return body.conversationText;
   if (body.answers) return answersToConversationText(body.answers as never);
-
-  const session = await prisma.session.findUnique({ where: { id: body.sessionId } });
-  if (!session?.conversationText) {
+  if (!storedConversationText) {
     throw new AppError(404, "Session conversation text was not found.");
   }
-  return session.conversationText;
+  return storedConversationText;
 }
 
 async function resolveBusinessData(body: {
   sessionId?: string;
   businessData?: BusinessData;
-}): Promise<{ sessionId: string; businessId: string; businessData: BusinessData }> {
+}, principal: RequestPrincipal): Promise<{
+  sessionId: string;
+  businessId: string;
+  businessData: BusinessData;
+  ownerId: string | null;
+  claimToken: string | null;
+}> {
   if (body.businessData) {
-    const session = await prisma.session.create({ data: { status: "business_extracted" } });
+    const ownership = createOwnership(principal);
+    const session = await prisma.session.create({
+      data: {
+        status: "business_extracted",
+        ownerId: ownership.ownerId,
+        claimTokenHash: ownership.claimTokenHash,
+        claimTokenExpiresAt: ownership.claimTokenExpiresAt
+      }
+    });
     const business = await prisma.business.create({
       data: {
         sessionId: session.id,
+        ownerId: ownership.ownerId,
         ...toBusinessRecord(body.businessData)
       }
     });
-    return { sessionId: session.id, businessId: business.id, businessData: body.businessData };
+    return {
+      sessionId: session.id,
+      businessId: business.id,
+      businessData: body.businessData,
+      ownerId: ownership.ownerId,
+      claimToken: ownership.claimToken
+    };
   }
 
   const business = await prisma.business.findUnique({
@@ -212,13 +275,16 @@ async function resolveBusinessData(body: {
   });
 
   if (!business) {
-    throw new AppError(404, "Business data was not found for this session.");
+    throw new AppError(404, "Draft was not found.");
   }
+  assertResourceAccess(business.session, principal);
 
   return {
     sessionId: business.sessionId,
     businessId: business.id,
-    businessData: fromBusinessRecord(business)
+    businessData: fromBusinessRecord(business),
+    ownerId: business.session.ownerId,
+    claimToken: null
   };
 }
 
@@ -226,20 +292,25 @@ async function resolveBusinessDataForSeo(body: {
   sessionId?: string;
   websiteId?: string;
   businessData?: BusinessData;
-}): Promise<BusinessData> {
-  if (body.businessData) return body.businessData;
-
+}, principal: RequestPrincipal): Promise<BusinessData> {
   if (body.websiteId) {
     const website = await prisma.website.findUnique({
       where: { id: body.websiteId },
-      include: { business: true }
+      include: { business: true, session: true }
     });
-    if (!website) throw new AppError(404, "Website was not found.");
-    return fromBusinessRecord(website.business);
+    if (!website) throw new AppError(404, "Draft was not found.");
+    assertResourceAccess(website.session, principal);
+    return body.businessData ?? fromBusinessRecord(website.business);
   }
 
-  const business = await prisma.business.findUnique({ where: { sessionId: body.sessionId } });
-  if (!business) throw new AppError(404, "Business data was not found for this session.");
+  if (body.businessData) return body.businessData;
+
+  const business = await prisma.business.findUnique({
+    where: { sessionId: body.sessionId },
+    include: { session: true }
+  });
+  if (!business) throw new AppError(404, "Draft was not found.");
+  assertResourceAccess(business.session, principal);
   return fromBusinessRecord(business);
 }
 
