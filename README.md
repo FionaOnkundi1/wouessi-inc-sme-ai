@@ -74,7 +74,7 @@ Frontend (`frontend/.env.local`):
 
 ```env
 VITE_API_URL=http://localhost:4000
-VITE_CLERK_PUBLISHABLE_KEY=
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_c21pbGluZy1ibHVlZ2lsbC05OS5jbGVyay5hY2NvdW50cy5kZXYk
 ```
 
 Backend:
