@@ -23,6 +23,14 @@ export async function deleteOwnedSite(siteId, getToken) {
   }
 }
 
+export async function publishOwnedSite(siteId, getToken) {
+  return updatePublishingStatus(siteId, 'publish', getToken, 'Could not publish this website.')
+}
+
+export async function unpublishOwnedSite(siteId, getToken) {
+  return updatePublishingStatus(siteId, 'unpublish', getToken, 'Could not unpublish this website.')
+}
+
 export async function claimDraft(siteId, claimToken, getToken) {
   const response = await apiRequest(
     `/api/sites/${siteId}/claim`,
@@ -71,7 +79,23 @@ export async function loadDraft(siteId, access = {}) {
     seo: result.seo,
     slug: result.slug || result.siteContent.slug,
     status: result.status,
+    publishUrl: result.publishUrl,
+    publishedAt: result.publishedAt,
   }
+}
+
+async function updatePublishingStatus(siteId, action, getToken, fallbackMessage) {
+  const response = await apiRequest(
+    `/api/sites/${siteId}/${action}`,
+    { method: 'POST' },
+    { getToken },
+  )
+
+  if (!response.ok) {
+    throw await readApiError(response, fallbackMessage)
+  }
+
+  return response.json()
 }
 
 function removeClientOnlyFields(siteContent) {
@@ -80,6 +104,10 @@ function removeClientOnlyFields(siteContent) {
     owned: _owned,
     siteId: _siteId,
     sessionId: _sessionId,
+    status: _status,
+    previewUrl: _previewUrl,
+    publishUrl: _publishUrl,
+    publishedAt: _publishedAt,
     ...persistedContent
   } = siteContent
 

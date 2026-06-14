@@ -41,6 +41,7 @@
 .primaryButton,
 .secondaryButton,
 .openButton,
+.liveButton,
 .deleteButton,
 .confirmDeleteButton {
   min-height: 38px;
@@ -61,6 +62,20 @@
 .openButton {
   color: #fff;
   background: #5b3fe8;
+}
+
+.liveButton {
+  border: 1px solid rgba(107,190,104,0.42);
+  color: #b7e7a5;
+  background: rgba(70,109,25,0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.liveButton:hover {
+  background: rgba(70,109,25,0.34);
 }
 
 .rowActions {
@@ -333,7 +348,8 @@
     width: calc(100% - 68px);
   }
 
-  .openButton {
+  .openButton,
+  .liveButton {
     flex: 1;
   }
 }

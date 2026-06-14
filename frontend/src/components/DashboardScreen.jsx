@@ -121,6 +121,11 @@ export default function DashboardScreen({ onOpenSite, onStartNew }) {
                   <span>Updated {formatDate(site.updatedAt)}</span>
                 </div>
                 <div className={styles.rowActions}>
+                  {site.status === 'published' && site.publishUrl && (
+                    <a className={styles.liveButton} href={site.publishUrl} target="_blank" rel="noreferrer">
+                      Open live
+                    </a>
+                  )}
                   <button className={styles.openButton} type="button" onClick={() => onOpenSite(site.siteId)}>
                     Open editor
                   </button>

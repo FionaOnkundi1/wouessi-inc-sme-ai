@@ -10,7 +10,21 @@ import AboutPage from '../site/pages/AboutPage'
 import ContactPage from '../site/pages/ContactPage'
 import styles from './GeneratedSite.module.css'
 
-export default function GeneratedSite({ data, onRestart, onSave, onDataChange, onOpenDashboard, saveState }) {
+export default function GeneratedSite({
+  data,
+  onRestart,
+  onSave,
+  onDataChange,
+  onOpenDashboard,
+  saveState,
+  publishState,
+  onPublish,
+  onUnpublish,
+  onCopyPublishUrl,
+}) {
+  const isPublished = data.status === 'published' && data.publishUrl
+  const publishing = publishState.status === 'publishing' || publishState.status === 'unpublishing'
+
   return (
     <div className={styles.root}>
       {/* Floating demo chrome bar */}
@@ -30,6 +44,24 @@ export default function GeneratedSite({ data, onRestart, onSave, onDataChange, o
           {data.owned && (
             <button className={styles.dashboardBtn} onClick={onOpenDashboard}>My websites</button>
           )}
+          {data.owned && isPublished && (
+            <>
+              <a className={styles.liveBtn} href={data.publishUrl} target="_blank" rel="noreferrer">Open live</a>
+              <button className={styles.copyBtn} type="button" onClick={onCopyPublishUrl}>Copy link</button>
+            </>
+          )}
+          {data.owned && (
+            <button className={styles.publishBtn} type="button" onClick={onPublish} disabled={publishing}>
+              {publishState.status === 'publishing'
+                ? isPublished ? 'Republishing…' : 'Publishing…'
+                : isPublished ? 'Republish' : 'Publish'}
+            </button>
+          )}
+          {data.owned && isPublished && (
+            <button className={styles.unpublishBtn} type="button" onClick={onUnpublish} disabled={publishing}>
+              {publishState.status === 'unpublishing' ? 'Unpublishing…' : 'Unpublish'}
+            </button>
+          )}
           <button
             className={`${styles.saveBtn} ${saveState.status === 'saved' ? styles.saveBtnDone : ''}`}
             onClick={onSave}
@@ -47,6 +79,11 @@ export default function GeneratedSite({ data, onRestart, onSave, onDataChange, o
       {saveState.message && (
         <div className={`${styles.saveMessage} ${saveState.status === 'error' ? styles.saveMessageError : ''}`}>
           {saveState.message}
+        </div>
+      )}
+      {publishState.message && (
+        <div className={`${styles.publishMessage} ${publishState.status === 'error' ? styles.publishMessageError : ''}`}>
+          {publishState.message}
         </div>
       )}
 

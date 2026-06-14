@@ -74,6 +74,16 @@
   gap: 16px;
 }
 
+.demoNotice {
+  padding: 10px 12px;
+  border: 1px solid var(--site-border, #e0ddd8);
+  border-radius: 8px;
+  background: var(--site-surface, #f5f5f0);
+  color: var(--site-text-mid, #666);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;
