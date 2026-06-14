@@ -1,5 +1,22 @@
 # Release Notes
 
+## Phase 3 Security Cleanup
+
+This maintenance change prepares the application for public publishing without changing runtime behaviour.
+
+### Security Fixes
+
+- Replaced tracked environment credential examples with explicit non-secret placeholders.
+- Documented that real credentials belong only in ignored local environment files or encrypted deployment settings.
+- Added the required revoke-and-rotate procedure for accidentally exposed credentials.
+- Confirmed that only safe `.env.example` files are tracked.
+
+### Required Operator Action
+
+- Revoke and rotate any Clerk secret that was previously committed or shared.
+- Store the replacement only in local or deployment environment variables.
+- Confirm Clerk sign-in and draft ownership using the replacement secret before deployment.
+
 ## Phase 1 Stabilisation
 
 This release stabilises the existing capstone application without adding Phase 2 product features.
