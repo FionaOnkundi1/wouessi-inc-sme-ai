@@ -74,7 +74,7 @@ Frontend (`frontend/.env.local`):
 
 ```env
 VITE_API_URL=http://localhost:4000
-VITE_CLERK_PUBLISHABLE_KEY=.....
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 ```
 
 Backend:
@@ -84,11 +84,24 @@ NODE_ENV=development
 PORT=4000
 FRONTEND_ORIGIN=http://localhost:5173
 PUBLIC_BASE_URL=http://localhost:4000
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/wouessi_backend?schema=public
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/wouessi?schema=public
 GROQ_API_KEY=
 GROQ_MODEL=llama-3.3-70b-versatile
-CLERK_PUBLISHABLE_KEY=......
-CLERK_SECRET_KEY=......
+CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
 ```
 
 `VITE_CLERK_PUBLISHABLE_KEY` and `CLERK_PUBLISHABLE_KEY` must refer to the same Clerk application. Never expose `CLERK_SECRET_KEY` to the frontend or commit real `.env` files and API credentials.
+
+The tracked `.env.example` files contain placeholders only. Put real credentials in ignored local `.env` files or the deployment platform's encrypted environment-variable settings.
+
+## Credential Safety
+
+If a credential is accidentally committed or shared:
+
+1. Revoke or rotate it immediately with the provider.
+2. Update the replacement only in ignored local environment files and deployment secrets.
+3. Remove the exposed value from tracked documentation and source files.
+4. Run a tracked-file secret scan before committing.
+
+Removing a credential from the latest Git commit does not invalidate copies in earlier history. Rotation is required; do not rely on rewriting Git history.
