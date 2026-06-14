@@ -249,6 +249,63 @@ function localExtract(input) {
   }
 }
 
+function toBusinessData(siteData) {
+  return {
+    businessName: siteData.name,
+    businessType: siteData.tag,
+    productsOrServices: siteData.products
+      .map((product) => `${product.name}${product.price ? ` ${product.price}` : ''}`)
+      .join(', '),
+    location: siteData.location,
+    targetCustomers: siteData.targetCustomers,
+    uniqueSellingPoint: siteData.uniqueSellingPoint,
+    websiteVibe: inferWebsiteVibe(siteData.tag),
+    extraFeatures: '',
+    tagline: siteData.tagline,
+    shortDescription: siteData.desc,
+    contactHint: [siteData.contactEmail, siteData.contactPhone, siteData.openHours].filter(Boolean).join(', '),
+    competitorReference: '',
+    missingFields: [],
+    confidence: 'medium',
+  }
+}
+
+function inferWebsiteVibe(businessType) {
+  if (/trade|repair|construction|electric|plumb/i.test(businessType)) return 'bold'
+  if (/beauty|bakery|handmade|jewellery|food/i.test(businessType)) return 'warm'
+  if (/professional|consult|finance|legal/i.test(businessType)) return 'professional'
+  return 'modern'
+}
+
+function applyBusinessDataToLocalSite(businessData, currentSite) {
+  const categoryText = `${businessData.businessType} ${businessData.productsOrServices}`.toLowerCase()
+  const category = CATEGORY_MAP.find((item) => item.keywords.some((keyword) => categoryText.includes(keyword)))
+    || DEFAULT_CATEGORY
+  const products = parseOfferings(businessData.productsOrServices, category)
+  const contact = parseContact(businessData.contactHint)
+  const slug = businessData.businessName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+
+  return {
+    ...currentSite,
+    name: businessData.businessName,
+    tagline: businessData.tagline,
+    tag: businessData.businessType,
+    desc: businessData.shortDescription,
+    location: businessData.location,
+    slug,
+    products,
+    seoTitle: `${businessData.businessName} — ${businessData.businessType} in ${businessData.location}`,
+    seoDesc: businessData.shortDescription,
+    keywords: `${businessData.businessType.toLowerCase()} ${businessData.location}, local business`,
+    about: `${businessData.businessName} is a ${businessData.businessType.toLowerCase()} serving ${businessData.location}. ${businessData.uniqueSellingPoint}`,
+    targetCustomers: businessData.targetCustomers,
+    uniqueSellingPoint: businessData.uniqueSellingPoint,
+    contactEmail: contact.email,
+    contactPhone: contact.phone,
+    openHours: parseOpenHours(businessData.contactHint),
+  }
+}
+
 // ─── Map Stefan's backend response to Div's frontend data shape ───────────────
 // Stefan returns: { sessionId, businessId, businessData, siteId, siteContent, templateId, styleTokens, seo }
 // Div's frontend expects: { name, tagline, tag, desc, location, slug, volume, unit, products, seoTitle, seoDesc, keywords, about, footerYear }
@@ -296,7 +353,6 @@ function mapBackendResponse(extractResult, siteResult) {
 
 // ─── Backend API path ─────────────────────────────────────────────────────────
 async function backendExtract(conversationText, access) {
-  // Step 1: Extract business data
   const extractRes = await apiRequest('/api/extract-business-data', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -308,35 +364,52 @@ async function backendExtract(conversationText, access) {
   }
 
   const extractResult = await extractRes.json()
+  return {
+    ...extractResult,
+    source: 'backend',
+  }
+}
 
-  // Step 2: Generate the full site
+async function backendGenerate(review, businessData, access) {
   const siteRes = await apiRequest('/api/generate-site', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sessionId: extractResult.sessionId })
-  }, { ...access, claimToken: extractResult.claimToken || access.claimToken })
+    body: JSON.stringify({
+      sessionId: review.sessionId,
+      businessData,
+    })
+  }, { ...access, claimToken: review.claimToken || access.claimToken })
 
   if (!siteRes.ok) {
     throw await readApiError(siteRes, 'Site generation failed')
   }
 
   const siteResult = await siteRes.json()
-
-  // Map to Div's frontend data shape
-  return mapBackendResponse(extractResult, siteResult)
+  return mapBackendResponse({ ...review, businessData }, siteResult)
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
-export async function extractBusinessData(input, access = {}) {
+export async function extractBusinessDetails(input, access = {}) {
   try {
     return await backendExtract(input, access)
   } catch (err) {
     console.warn('Backend unavailable, using local fallback:', err.message)
-    return localExtract(input)
+    const fallbackSiteData = localExtract(input)
+    return {
+      sessionId: null,
+      businessId: null,
+      businessData: toBusinessData(fallbackSiteData),
+      claimToken: null,
+      source: 'fallback',
+      fallbackSiteData,
+    }
   }
 }
 
-// Kept for compatibility with App.jsx
-export function buildFallback(input) {
-  return localExtract(input)
+export async function generateWebsiteFromBusinessDetails(review, businessData, access = {}) {
+  if (review.source === 'backend' && review.sessionId) {
+    return backendGenerate(review, businessData, access)
+  }
+
+  return applyBusinessDataToLocalSite(businessData, review.fallbackSiteData || localExtract(businessData.shortDescription))
 }

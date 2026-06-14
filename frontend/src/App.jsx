@@ -3,12 +3,16 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import InputScreen from './components/InputScreen'
 import ConversationScreen from './components/ConversationScreen'
 import ProcessingScreen from './components/ProcessingScreen'
+import BusinessReviewScreen from './components/BusinessReviewScreen'
 import GeneratedSite from './components/GeneratedSite'
 import DashboardScreen from './components/DashboardScreen'
 import TemplatePreviewScreen from './components/TemplatePreviewScreen'
 import FeaturesScreen from './components/FeaturesScreen'
 import HowItWorksScreen from './components/HowItWorksScreen'
-import { extractBusinessData, buildFallback } from './services/aiService'
+import {
+  extractBusinessDetails,
+  generateWebsiteFromBusinessDetails,
+} from './services/aiService'
 import { applyTheme, resetTheme } from './services/themeService'
 import { useWouessiAuth } from './auth/AuthContext'
 import { claimDraft, loadDraft, saveDraftContent } from './services/draftService'
@@ -23,6 +27,9 @@ export default function App() {
   const [input, setInput] = useState('')
   const [fromVoice, setFromVoice] = useState(false)
   const [siteData, setSiteData] = useState(null)
+  const [businessReview, setBusinessReview] = useState(null)
+  const [reviewError, setReviewError] = useState('')
+  const [processingMode, setProcessingMode] = useState('extracting')
   const [saveState, setSaveState] = useState({ status: 'idle', message: '' })
   const [requestedDraftId, setRequestedDraftId] = useState(getDraftId)
   const restoreAttemptRef = useRef('')
@@ -37,22 +44,49 @@ export default function App() {
   // Step 2 — user completes conversation questions
   // fullPrompt is the enriched text built by ConversationScreen
   async function handleConversationComplete(fullPrompt) {
+    setInput(fullPrompt)
+    setReviewError('')
+    setProcessingMode('extracting')
     setScreen('processing')
 
-    let data
     try {
-      const [aiResult] = await Promise.all([
-        extractBusinessData(fullPrompt, {
+      const [review] = await Promise.all([
+        extractBusinessDetails(fullPrompt, {
           getToken: auth.isSignedIn ? auth.getToken : null,
-        }).catch(() => buildFallback(fullPrompt)),
+        }),
+        wait(1600),
+      ])
+      setBusinessReview(review)
+      setScreen('review')
+    } catch (error) {
+      setReviewError(error.message || 'Could not extract your business details.')
+      setScreen('conversation')
+    }
+  }
+
+  async function handleReviewConfirm(businessData) {
+    if (!businessReview) return
+    setReviewError('')
+    setProcessingMode('generating')
+    setScreen('processing')
+
+    try {
+      const [data] = await Promise.all([
+        generateWebsiteFromBusinessDetails(businessReview, businessData, {
+          getToken: auth.isSignedIn ? auth.getToken : null,
+          claimToken: businessReview.claimToken,
+        }),
         wait(PROCESSING_DISPLAY_MS),
       ])
-      data = aiResult
-    } catch {
-      await wait(PROCESSING_DISPLAY_MS)
-      data = buildFallback(fullPrompt)
-    }
 
+      finishGeneration(data)
+    } catch (error) {
+      setReviewError(error.message || 'Could not generate your website. Please try again.')
+      setScreen('review')
+    }
+  }
+
+  function finishGeneration(data) {
     applyTheme(data)
     const nextData = {
       ...data,
@@ -186,6 +220,8 @@ export default function App() {
   function handleRestart() {
     resetTheme()
     setSiteData(null)
+    setBusinessReview(null)
+    setReviewError('')
     setInput('')
     setSaveState({ status: 'idle', message: '' })
     setScreen('input')
@@ -274,6 +310,18 @@ export default function App() {
     return <DashboardScreen onOpenSite={handleOpenSite} onStartNew={handleRestart} />
   }
 
+  if (screen === 'review' && businessReview) {
+    return (
+      <BusinessReviewScreen
+        review={businessReview}
+        onConfirm={handleReviewConfirm}
+        onStartOver={handleRestart}
+        isSubmitting={false}
+        error={reviewError}
+      />
+    )
+  }
+
   // Full-page takeover for conversation
   if (screen === 'conversation') {
     return (
@@ -343,7 +391,7 @@ export default function App() {
     {screen === 'processing' && (
       <div className={styles.page}>
         <main className={styles.container}>
-          <ProcessingScreen input={input} fromVoice={fromVoice} />
+          <ProcessingScreen input={input} fromVoice={fromVoice} mode={processingMode} />
         </main>
       </div>
     )}
