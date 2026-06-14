@@ -4,7 +4,14 @@ import { EXAMPLES } from '../data/examples'
 import { AuthControls } from '../auth/AuthContext'
 import styles from './InputScreen.module.css'
 
-export default function InputScreen({ onSubmit, onOpenDashboard, onPreviewTemplates }) {
+export default function InputScreen({
+  onSubmit,
+  onOpenDashboard,
+  onHome,
+  onFeatures,
+  onHowItWorks,
+  onPreviewTemplates,
+}) {
   const [business, setBusiness] = useState('')
   const [location, setLocation] = useState('')
   const [recording, setRecording] = useState(false)
@@ -74,14 +81,14 @@ export default function InputScreen({ onSubmit, onOpenDashboard, onPreviewTempla
 
       {/* NAVBAR */}
       <nav className={styles.nav} role="navigation" aria-label="Main navigation">
-        <div className={styles.navBrand}>
+        <button type="button" className={styles.navBrand} onClick={onHome} aria-label="Go to homepage">
           <div className={styles.navLogo} aria-hidden="true">
             <img src="/logo.png" alt="Wouessi Inc." style={{ width: '80px', height: 'auto', objectFit: 'contain' }} />
           </div>
-        </div>
-        <div className={styles.navLinks} role="list">
-          <span role="listitem">Features</span>
-          <span role="listitem">How It Works</span>
+        </button>
+        <div className={styles.navLinks}>
+          <button type="button" className={styles.navLinkButton} onClick={onFeatures}>Features</button>
+          <button type="button" className={styles.navLinkButton} onClick={onHowItWorks}>How It Works</button>
           <button type="button" className={styles.navLinkButton} onClick={onPreviewTemplates}>Templates</button>
         </div>
         <AuthControls className={styles.navCta} onOpenDashboard={onOpenDashboard} />
@@ -109,21 +116,6 @@ export default function InputScreen({ onSubmit, onOpenDashboard, onPreviewTempla
               Generate a professional business website from voice or text in seconds.
               No coding required — just speak or type your idea.
             </p>
-
-            <div className={styles.heroActions}>
-              <button
-                className={styles.heroBtnPrimary}
-                onClick={handleGenerate}
-                aria-label="Generate website from your business description"
-                disabled={!business.trim()}
-              >
-                <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13" aria-hidden="true">
-                  <path d="M8 1l1.8 3.6L14 5.6l-3 2.9.7 4.1L8 10.5l-3.7 2.1.7-4.1L2 5.6l4.2-.9L8 1z"/>
-                </svg>
-                Generate Website
-              </button>
-              <button className={styles.heroBtnGhost} aria-label="Watch demo video">Watch Demo</button>
-            </div>
 
             <div className={styles.heroStats} aria-label="Platform statistics">
               <div className={styles.heroStat}>

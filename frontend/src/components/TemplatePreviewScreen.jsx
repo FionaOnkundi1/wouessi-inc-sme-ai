@@ -1,12 +1,18 @@
 import { TEMPLATE_PREVIEWS } from '../data/templatePreviews'
 import styles from './TemplatePreviewScreen.module.css'
 
-export default function TemplatePreviewScreen({ onBack, onPreview }) {
+export default function TemplatePreviewScreen({ onBack, onHome, onFeatures, onHowItWorks, onPreview }) {
   return (
     <main className={styles.page}>
       <nav className={styles.nav}>
-        <img src="/logo.png" alt="Wouessi Inc." className={styles.logo} />
-        <button className={styles.backBtn} onClick={onBack}>Back</button>
+        <button type="button" className={styles.logoButton} onClick={onHome} aria-label="Go to homepage">
+          <img src="/logo.png" alt="Wouessi Inc." className={styles.logo} />
+        </button>
+        <div className={styles.navActions}>
+          <button className={styles.navLinkBtn} onClick={onFeatures}>Features</button>
+          <button className={styles.navLinkBtn} onClick={onHowItWorks}>How It Works</button>
+          <button className={styles.backBtn} onClick={onBack}>Back</button>
+        </div>
       </nav>
 
       <section className={styles.header}>
