@@ -10,7 +10,7 @@ import AboutPage from '../site/pages/AboutPage'
 import ContactPage from '../site/pages/ContactPage'
 import styles from './GeneratedSite.module.css'
 
-export default function GeneratedSite({ data, onRestart, onSave, saveState }) {
+export default function GeneratedSite({ data, onRestart, onSave, onDataChange, saveState }) {
   return (
     <div className={styles.root}>
       {/* Floating demo chrome bar */}
@@ -49,7 +49,7 @@ export default function GeneratedSite({ data, onRestart, onSave, saveState }) {
 
       {/* Full-page site with edit system */}
       <div className={styles.site}>
-        <SiteProvider initialData={data}>
+        <SiteProvider initialData={data} onDataChange={onDataChange}>
           <MemoryRouter>
             <Navbar />
             <Routes>

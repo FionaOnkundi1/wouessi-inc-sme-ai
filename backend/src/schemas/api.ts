@@ -43,6 +43,12 @@ export const publishSiteRequestSchema = z.object({
   siteId: z.string().min(1)
 });
 
+export const updateSiteRequestSchema = z.object({
+  siteContent: z.record(z.unknown()).refine((value) => Object.keys(value).length > 0, {
+    message: "Site content cannot be empty"
+  })
+});
+
 export const regenerateSectionRequestSchema = z.object({
   siteId: z.string().uuid(),
   sectionId: z.enum([

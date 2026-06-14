@@ -18,3 +18,10 @@
   color: #a32d2d;
   text-align: center;
 }
+
+.status {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}

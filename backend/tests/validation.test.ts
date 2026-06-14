@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { regenerateSectionRequestSchema, submitAnswersSchema } from "../src/schemas/api.js";
+import {
+  regenerateSectionRequestSchema,
+  submitAnswersSchema,
+  updateSiteRequestSchema
+} from "../src/schemas/api.js";
 import { businessDataSchema } from "../src/schemas/business.js";
 
 describe("request validation", () => {
@@ -58,5 +62,14 @@ describe("request validation", () => {
         siteData: {}
       })
     ).toThrow();
+  });
+
+  it("accepts site content updates and rejects empty updates", () => {
+    const parsed = updateSiteRequestSchema.parse({
+      siteContent: { tagline: "Reliable electrical help" }
+    });
+
+    expect(parsed.siteContent.tagline).toBe("Reliable electrical help");
+    expect(() => updateSiteRequestSchema.parse({ siteContent: {} })).toThrow();
   });
 });

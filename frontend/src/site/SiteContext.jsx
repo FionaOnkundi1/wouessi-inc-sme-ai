@@ -1,15 +1,20 @@
 // src/site/SiteContext.jsx
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useRef } from 'react'
 
 export const SiteContext = createContext(null)
 
-export function SiteProvider({ initialData, children }) {
+export function SiteProvider({ initialData, onDataChange, children }) {
   const [data, setData] = useState(initialData)
+  const dataRef = useRef(initialData)
   const [editPanel, setEditPanel] = useState(null)
 
-  const updateSection = useCallback((patch) => {
-    setData((prev) => ({ ...prev, ...patch }))
-  }, [])
+  const updateSection = useCallback(async (patch) => {
+    const nextData = { ...dataRef.current, ...patch }
+    dataRef.current = nextData
+    setData(nextData)
+    await onDataChange?.(nextData)
+    return nextData
+  }, [onDataChange])
 
   const openEdit = useCallback((config) => {
     setEditPanel(config)
