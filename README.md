@@ -61,6 +61,7 @@ npm run test:backend
 - Initial generation uses backend extraction and site-generation endpoints, with a local frontend fallback if the backend is unavailable.
 - Speech transcription and editable-section regeneration require the backend.
 - Generated websites are stored as structured JSON for the React renderer.
+- Generated-site edits are persisted through the backend and restored from draft URLs after refresh.
 - The current publish endpoint marks a database record as published; real public-page rendering is not yet implemented.
 
 ## Reference Templates

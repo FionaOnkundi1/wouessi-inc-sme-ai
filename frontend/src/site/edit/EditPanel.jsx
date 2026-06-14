@@ -81,7 +81,7 @@ export default function EditPanel() {
         getToken: auth.isSignedIn ? auth.getToken : null,
         claimToken: data.claimToken,
       })
-      updateSection(patch)
+      await updateSection(patch)
       setDone(true)
       setTimeout(() => {
         closeEdit()

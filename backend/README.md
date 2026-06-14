@@ -12,6 +12,7 @@ TypeScript Express API for the voice-first SME website generator.
 - Generates frontend-compatible site JSON for Fiona's React renderer.
 - Saves preview/published websites in PostgreSQL with Prisma.
 - Assigns authenticated drafts to Clerk users and protects anonymous drafts with expiring claim tokens.
+- Persists generated-site edits so drafts can be restored after refresh.
 
 ## Setup
 
@@ -42,6 +43,7 @@ POST /api/generate-seo
 POST /api/regenerate-section
 POST /api/publish-site
 GET  /api/sites/:siteId
+PATCH /api/sites/:siteId
 POST /api/sites/:siteId/claim
 ```
 

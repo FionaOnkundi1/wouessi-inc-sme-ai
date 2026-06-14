@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../lib/errors.js";
 import { buildPreviewUrl, buildPublishUrl } from "../utils/urls.js";
@@ -8,6 +9,7 @@ import {
   requireSignedIn
 } from "../middleware/auth.js";
 import { claimDraftForUser } from "../services/draftOwnership.js";
+import { updateSiteRequestSchema } from "../schemas/api.js";
 
 export const sitesRouter = Router();
 
@@ -61,3 +63,44 @@ sitesRouter.post("/:siteId/claim", async (req, res, next) => {
     next(error);
   }
 });
+
+sitesRouter.patch("/:siteId", async (req, res, next) => {
+  try {
+    const body = updateSiteRequestSchema.parse(req.body);
+    const existingWebsite = await prisma.website.findUnique({
+      where: { id: req.params.siteId },
+      include: { session: true }
+    });
+
+    if (!existingWebsite) {
+      throw new AppError(404, "Draft was not found.");
+    }
+    assertResourceAccess(existingWebsite.session, getRequestPrincipal(req));
+
+    const website = await prisma.website.update({
+      where: { id: existingWebsite.id },
+      data: { siteContent: removeClientOnlyFields(body.siteContent) as Prisma.InputJsonObject }
+    });
+
+    res.json({
+      siteId: website.id,
+      status: website.status,
+      siteContent: website.siteContent,
+      updatedAt: website.updatedAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+function removeClientOnlyFields(siteContent: Record<string, unknown>) {
+  const {
+    claimToken: _claimToken,
+    owned: _owned,
+    siteId: _siteId,
+    sessionId: _sessionId,
+    ...persistedContent
+  } = siteContent;
+
+  return persistedContent;
+}
