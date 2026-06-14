@@ -32,6 +32,8 @@ export default function InputScreen({
         setSpeechError(
           err === 'not-allowed'
             ? 'Microphone access denied. Please allow microphone access and try again.'
+            : err === 'empty-transcript'
+            ? 'I could not hear enough speech. Please speak for a few seconds or type your description.'
             : err === 'transcription-failed'
             ? 'Could not transcribe audio. Please try again or type your description.'
             : 'Speech error — try typing instead.'
