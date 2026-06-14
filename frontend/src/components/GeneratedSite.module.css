@@ -72,7 +72,8 @@
   font-family: 'Inter', sans-serif;
 }
 
-.restartBtn {
+.restartBtn,
+.dashboardBtn {
   font-size: 12px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
@@ -83,6 +84,10 @@
   color: #ccc;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
+}
+
+.dashboardBtn {
+  color: #fff;
 }
 
 .saveBtn {
@@ -126,7 +131,8 @@
   color: #9f1239;
 }
 
-.restartBtn:hover {
+.restartBtn:hover,
+.dashboardBtn:hover {
   background: rgba(255,255,255,0.15);
   color: #fff;
 }
@@ -153,6 +159,7 @@
   }
 
   .saveBtn,
+  .dashboardBtn,
   .restartBtn {
     padding: 5px 9px;
   }

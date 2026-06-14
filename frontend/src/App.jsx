@@ -4,6 +4,7 @@ import InputScreen from './components/InputScreen'
 import ConversationScreen from './components/ConversationScreen'
 import ProcessingScreen from './components/ProcessingScreen'
 import GeneratedSite from './components/GeneratedSite'
+import DashboardScreen from './components/DashboardScreen'
 import TemplatePreviewScreen from './components/TemplatePreviewScreen'
 import FeaturesScreen from './components/FeaturesScreen'
 import HowItWorksScreen from './components/HowItWorksScreen'
@@ -18,11 +19,12 @@ const PENDING_CLAIM_KEY = 'wouessi:pending-claim'
 
 export default function App() {
   const auth = useWouessiAuth()
-  const [screen, setScreen] = useState('input')
+  const [screen, setScreen] = useState(getInitialScreen)
   const [input, setInput] = useState('')
   const [fromVoice, setFromVoice] = useState(false)
   const [siteData, setSiteData] = useState(null)
   const [saveState, setSaveState] = useState({ status: 'idle', message: '' })
+  const [requestedDraftId, setRequestedDraftId] = useState(getDraftId)
   const restoreAttemptRef = useRef('')
 
   // Step 1 — user submits initial voice/text description
@@ -68,7 +70,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    const draftId = getDraftId()
+    const draftId = requestedDraftId
     if (!draftId || !auth.isLoaded || siteData?.siteId === draftId) return
 
     const attemptKey = `${draftId}:${auth.userId || 'anonymous'}`
@@ -98,13 +100,15 @@ export default function App() {
     }).catch((error) => {
       if (cancelled) return
       console.warn('Could not restore saved website:', error.message)
+      setRequestedDraftId(null)
+      clearDraftUrl()
       setScreen('input')
     })
 
     return () => {
       cancelled = true
     }
-  }, [auth.getToken, auth.isLoaded, auth.isSignedIn, auth.userId, siteData?.siteId])
+  }, [auth.getToken, auth.isLoaded, auth.isSignedIn, auth.userId, requestedDraftId, siteData?.siteId])
 
   const handleSiteContentChange = useCallback(async (nextData) => {
     if (!nextData?.siteId) return
@@ -185,7 +189,30 @@ export default function App() {
     setInput('')
     setSaveState({ status: 'idle', message: '' })
     setScreen('input')
+    setRequestedDraftId(null)
     clearDraftUrl()
+    clearDashboardUrl()
+    window.scrollTo(0, 0)
+  }
+
+  function handleOpenDashboard() {
+    resetTheme()
+    setSiteData(null)
+    setSaveState({ status: 'idle', message: '' })
+    setScreen('dashboard')
+    setRequestedDraftId(null)
+    clearDraftUrl()
+    setDashboardUrl()
+    window.scrollTo(0, 0)
+  }
+
+  function handleOpenSite(siteId) {
+    restoreAttemptRef.current = ''
+    setSiteData(null)
+    setSaveState({ status: 'idle', message: '' })
+    setDraftUrl(siteId)
+    setRequestedDraftId(siteId)
+    setScreen('loading-draft')
     window.scrollTo(0, 0)
   }
 
@@ -193,7 +220,9 @@ export default function App() {
     resetTheme()
     setSiteData(null)
     setSaveState({ status: 'idle', message: '' })
+    setRequestedDraftId(null)
     clearDraftUrl()
+    clearDashboardUrl()
     setScreen('templates')
     window.scrollTo(0, 0)
   }
@@ -220,7 +249,9 @@ export default function App() {
     applyTheme(data)
     setSiteData({ ...data, owned: false })
     setSaveState({ status: 'idle', message: '' })
+    setRequestedDraftId(null)
     clearDraftUrl()
+    clearDashboardUrl()
     setScreen('result')
     window.scrollTo(0, 0)
   }
@@ -233,9 +264,14 @@ export default function App() {
         onRestart={handleRestart}
         onSave={handleSaveDraft}
         onDataChange={handleSiteContentChange}
+        onOpenDashboard={handleOpenDashboard}
         saveState={saveState}
       />
     )
+  }
+
+  if (screen === 'dashboard') {
+    return <DashboardScreen onOpenSite={handleOpenSite} onStartNew={handleRestart} />
   }
 
   // Full-page takeover for conversation
@@ -296,12 +332,13 @@ export default function App() {
   <>
     {screen === 'input' && (
       <InputScreen
-        onSubmit={(text) => handleSubmit(text, false)}
-        onHome={handleRestart}
-        onFeatures={handleOpenFeatures}
-        onHowItWorks={handleOpenHowItWorks}
-        onPreviewTemplates={handleOpenTemplateGallery}
-      />
+  onSubmit={(text) => handleSubmit(text, false)}
+  onOpenDashboard={handleOpenDashboard}
+  onHome={handleRestart}
+  onFeatures={handleOpenFeatures}
+  onHowItWorks={handleOpenHowItWorks}
+  onPreviewTemplates={handleOpenTemplateGallery}
+/>
     )}
     {screen === 'processing' && (
       <div className={styles.page}>
@@ -328,6 +365,7 @@ function getDraftId() {
 
 function setDraftUrl(siteId) {
   const url = new URL(window.location.href)
+  url.searchParams.delete('view')
   url.searchParams.set('draft', siteId)
   window.history.replaceState({}, '', url)
 }
@@ -335,5 +373,23 @@ function setDraftUrl(siteId) {
 function clearDraftUrl() {
   const url = new URL(window.location.href)
   url.searchParams.delete('draft')
+  window.history.replaceState({}, '', url)
+}
+
+function getInitialScreen() {
+  return new URLSearchParams(window.location.search).get('view') === 'dashboard'
+    ? 'dashboard'
+    : 'input'
+}
+
+function setDashboardUrl() {
+  const url = new URL(window.location.href)
+  url.searchParams.set('view', 'dashboard')
+  window.history.replaceState({}, '', url)
+}
+
+function clearDashboardUrl() {
+  const url = new URL(window.location.href)
+  url.searchParams.delete('view')
   window.history.replaceState({}, '', url)
 }

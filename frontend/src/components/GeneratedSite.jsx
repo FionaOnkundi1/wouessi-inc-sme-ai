@@ -10,7 +10,7 @@ import AboutPage from '../site/pages/AboutPage'
 import ContactPage from '../site/pages/ContactPage'
 import styles from './GeneratedSite.module.css'
 
-export default function GeneratedSite({ data, onRestart, onSave, onDataChange, saveState }) {
+export default function GeneratedSite({ data, onRestart, onSave, onDataChange, onOpenDashboard, saveState }) {
   return (
     <div className={styles.root}>
       {/* Floating demo chrome bar */}
@@ -27,6 +27,9 @@ export default function GeneratedSite({ data, onRestart, onSave, onDataChange, s
             SEO ready
           </div>
           <span className={styles.editHint}>Hover any section to edit it</span>
+          {data.owned && (
+            <button className={styles.dashboardBtn} onClick={onOpenDashboard}>My websites</button>
+          )}
           <button
             className={`${styles.saveBtn} ${saveState.status === 'saved' ? styles.saveBtnDone : ''}`}
             onClick={onSave}

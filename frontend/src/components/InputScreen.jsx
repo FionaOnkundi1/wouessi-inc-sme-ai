@@ -4,7 +4,14 @@ import { EXAMPLES } from '../data/examples'
 import { AuthControls } from '../auth/AuthContext'
 import styles from './InputScreen.module.css'
 
-export default function InputScreen({ onSubmit, onHome, onFeatures, onHowItWorks, onPreviewTemplates }) {
+export default function InputScreen({
+  onSubmit,
+  onOpenDashboard,
+  onHome,
+  onFeatures,
+  onHowItWorks,
+  onPreviewTemplates,
+}) {
   const [business, setBusiness] = useState('')
   const [location, setLocation] = useState('')
   const [recording, setRecording] = useState(false)
@@ -84,7 +91,7 @@ export default function InputScreen({ onSubmit, onHome, onFeatures, onHowItWorks
           <button type="button" className={styles.navLinkButton} onClick={onHowItWorks}>How It Works</button>
           <button type="button" className={styles.navLinkButton} onClick={onPreviewTemplates}>Templates</button>
         </div>
-        <AuthControls className={styles.navCta} />
+        <AuthControls className={styles.navCta} onOpenDashboard={onOpenDashboard} />
       </nav>
 
       {/* MAIN CONTENT */}

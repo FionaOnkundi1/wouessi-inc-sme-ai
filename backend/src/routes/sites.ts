@@ -13,6 +13,38 @@ import { updateSiteRequestSchema } from "../schemas/api.js";
 
 export const sitesRouter = Router();
 
+sitesRouter.get("/", async (req, res, next) => {
+  try {
+    const ownerId = requireSignedIn(getRequestPrincipal(req));
+    const websites = await prisma.website.findMany({
+      where: { ownerId },
+      orderBy: { updatedAt: "desc" },
+      include: { business: true }
+    });
+
+    res.json({
+      sites: websites.map((website) => {
+        const siteContent = website.siteContent as Record<string, unknown>;
+        return {
+          siteId: website.id,
+          name: readContentString(siteContent, "name", website.business.businessName),
+          tagline: readContentString(siteContent, "tagline", website.business.tagline),
+          slug: website.slug,
+          status: website.status,
+          templateId: website.templateId,
+          previewUrl: buildPreviewUrl(website.id),
+          publishUrl: website.status === "published" ? buildPublishUrl(website.slug) : null,
+          createdAt: website.createdAt,
+          updatedAt: website.updatedAt,
+          publishedAt: website.publishedAt
+        };
+      })
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 sitesRouter.get("/:siteId", async (req, res, next) => {
   try {
     const identifier = req.params.siteId;
@@ -93,6 +125,26 @@ sitesRouter.patch("/:siteId", async (req, res, next) => {
   }
 });
 
+sitesRouter.delete("/:siteId", async (req, res, next) => {
+  try {
+    const ownerId = requireSignedIn(getRequestPrincipal(req));
+    const result = await prisma.website.deleteMany({
+      where: {
+        id: req.params.siteId,
+        ownerId
+      }
+    });
+
+    if (result.count === 0) {
+      throw new AppError(404, "Draft was not found.");
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
 function removeClientOnlyFields(siteContent: Record<string, unknown>) {
   const {
     claimToken: _claimToken,
@@ -103,4 +155,13 @@ function removeClientOnlyFields(siteContent: Record<string, unknown>) {
   } = siteContent;
 
   return persistedContent;
+}
+
+function readContentString(
+  siteContent: Record<string, unknown>,
+  key: string,
+  fallback: string
+) {
+  const value = siteContent[key];
+  return typeof value === "string" && value.trim() ? value : fallback;
 }
