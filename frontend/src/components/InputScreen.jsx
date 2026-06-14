@@ -110,21 +110,6 @@ export default function InputScreen({ onSubmit, onHome, onFeatures, onHowItWorks
               No coding required — just speak or type your idea.
             </p>
 
-            <div className={styles.heroActions}>
-              <button
-                className={styles.heroBtnPrimary}
-                onClick={handleGenerate}
-                aria-label="Generate website from your business description"
-                disabled={!business.trim()}
-              >
-                <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13" aria-hidden="true">
-                  <path d="M8 1l1.8 3.6L14 5.6l-3 2.9.7 4.1L8 10.5l-3.7 2.1.7-4.1L2 5.6l4.2-.9L8 1z"/>
-                </svg>
-                Generate Website
-              </button>
-              <button className={styles.heroBtnGhost} aria-label="Watch demo video">Watch Demo</button>
-            </div>
-
             <div className={styles.heroStats} aria-label="Platform statistics">
               <div className={styles.heroStat}>
                 <div className={styles.heroStatNum}>5,000+</div>
