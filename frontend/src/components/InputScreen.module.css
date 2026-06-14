@@ -15,7 +15,15 @@
   flex-shrink: 0;
 }
 
-.navBrand { display: flex; align-items: center; gap: 10px; }
+.navBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
 
 .navLogo {
   width: auto;

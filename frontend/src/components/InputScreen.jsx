@@ -4,7 +4,7 @@ import { EXAMPLES } from '../data/examples'
 import { AuthControls } from '../auth/AuthContext'
 import styles from './InputScreen.module.css'
 
-export default function InputScreen({ onSubmit, onPreviewTemplates }) {
+export default function InputScreen({ onSubmit, onHome, onPreviewTemplates }) {
   const [business, setBusiness] = useState('')
   const [location, setLocation] = useState('')
   const [recording, setRecording] = useState(false)
@@ -74,11 +74,11 @@ export default function InputScreen({ onSubmit, onPreviewTemplates }) {
 
       {/* NAVBAR */}
       <nav className={styles.nav} role="navigation" aria-label="Main navigation">
-        <div className={styles.navBrand}>
+        <button type="button" className={styles.navBrand} onClick={onHome} aria-label="Go to homepage">
           <div className={styles.navLogo} aria-hidden="true">
             <img src="/logo.png" alt="Wouessi Inc." style={{ width: '80px', height: 'auto', objectFit: 'contain' }} />
           </div>
-        </div>
+        </button>
         <div className={styles.navLinks} role="list">
           <span role="listitem">Features</span>
           <span role="listitem">How It Works</span>

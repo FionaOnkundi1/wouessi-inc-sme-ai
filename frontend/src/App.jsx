@@ -242,6 +242,7 @@ export default function App() {
     return (
       <TemplatePreviewScreen
         onBack={handleRestart}
+        onHome={handleRestart}
         onPreview={handleOpenTemplatePreview}
       />
     )
@@ -252,6 +253,7 @@ export default function App() {
     {screen === 'input' && (
       <InputScreen
         onSubmit={(text) => handleSubmit(text, false)}
+        onHome={handleRestart}
         onPreviewTemplates={handleOpenTemplateGallery}
       />
     )}
