@@ -7,6 +7,7 @@ Voice-first small business website generator with a React frontend and a TypeScr
 ```txt
 frontend/   React + Vite generator, guided conversation, preview, and editor UI
 backend/    Express API, Prisma persistence, speech transcription, and all AI requests
+public-site/ Next.js read-only renderer for published website snapshots
 templates/  Static HTML design references only; not used by the running application
 docs/       Product, AI contract, test-case, and template-reference documentation
 tools/      One-off design helper tools; not used by the running application
@@ -21,6 +22,7 @@ Install dependencies:
 ```bash
 npm ci --prefix frontend
 npm ci --prefix backend
+npm ci --prefix public-site
 ```
 
 Create local environment files:
@@ -28,6 +30,7 @@ Create local environment files:
 ```bash
 cp frontend/.env.example frontend/.env.local
 cp backend/.env.example backend/.env
+cp public-site/.env.example public-site/.env.local
 ```
 
 Set `DATABASE_URL` in `backend/.env`. `GROQ_API_KEY` is optional for local fallback behavior. Clerk keys are optional for anonymous generation but required to save drafts to an account.
@@ -44,16 +47,19 @@ Run the applications in separate terminals:
 ```bash
 npm run dev:frontend
 npm run dev:backend
+npm run dev:public-site
 ```
 
-The frontend runs at `http://localhost:5173` and the API runs at `http://localhost:4000`.
+The frontend runs at `http://localhost:5173`, the API at `http://localhost:4000`, and published websites at `http://localhost:3000/sites/:slug`.
 
 ## Build And Test
 
 ```bash
 npm run build:frontend
 npm run build:backend
+npm run build:public-site
 npm run test:backend
+npm run test:public-site
 ```
 
 ## Runtime Notes
