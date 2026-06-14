@@ -1,0 +1,60 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #171917;
+  font-family: Inter, Arial, sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+.site-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  background: var(--site-bg);
+  color: var(--site-text);
+  font-family: var(--site-font-sans);
+}
+
+.not-found {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: #0e1117;
+  color: #ffffff;
+  text-align: center;
+}
+
+.not-found h1 {
+  margin-bottom: 12px;
+  font-size: clamp(32px, 6vw, 64px);
+}
+
+.not-found p {
+  color: #9ba3b5;
+  line-height: 1.6;
+}
