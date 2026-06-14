@@ -22,6 +22,10 @@ export type GeneratedSiteContent = {
   seoDesc: string;
   keywords: string;
   about: string;
+  targetCustomers: string;
+  uniqueSellingPoint: string;
+  contactEmail: string;
+  contactPhone: string;
   footerYear: string;
 };
 
@@ -46,6 +50,10 @@ export function buildGeneratedSiteContent(
     seoDesc: seo.description,
     keywords: seo.keywords.join(", "),
     about: buildAboutCopy(businessData),
+    targetCustomers: businessData.targetCustomers,
+    uniqueSellingPoint: businessData.uniqueSellingPoint,
+    contactEmail: extractEmail(businessData.contactHint),
+    contactPhone: extractPhone(businessData.contactHint),
     footerYear: String(new Date().getFullYear())
   };
 }
@@ -71,9 +79,9 @@ function buildProductCards(productsOrServices: string, palette: TemplateSelectio
   };
 
   const emojis = ["⭐", "✨", "✓"];
-  return names.map((name, index) => ({
-    name,
-    price: "Contact us",
+  return names.map((item, index) => ({
+    name: cleanOfferingName(item) || ["Core Service", "Premium Option", "Custom Package"][index],
+    price: extractPrice(item) || "Contact us",
     emoji: emojis[index],
     bg: colorsByPalette[palette][index]
   }));
@@ -87,4 +95,23 @@ function inferUnit(businessType: string): string {
   if (/repair/i.test(businessType)) return "repairs/week";
   if (/food|bakery|goods|jewellery|product/i.test(businessType)) return "orders/week";
   return "clients/week";
+}
+
+function extractEmail(value: string): string {
+  return value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || "";
+}
+
+function extractPhone(value: string): string {
+  return value.match(/(?:\+\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s-]?){2,5}\d{2,4}/)?.[0]?.trim() || "";
+}
+
+function extractPrice(value: string): string {
+  return value.match(/(?:[$€£]\s?\d+(?:\.\d{2})?|\bfrom\b\s*[$€£]?\s?\d+(?:\.\d{2})?|\bpoa\b|\bcontact us\b)/i)?.[0]?.trim() || "";
+}
+
+function cleanOfferingName(value: string): string {
+  return value
+    .replace(/(?:[$€£]\s?\d+(?:\.\d{2})?|\bfrom\b\s*[$€£]?\s?\d+(?:\.\d{2})?|\bpoa\b|\bcontact us\b)/ig, "")
+    .trim()
+    .replace(/\s{2,}/g, " ");
 }
