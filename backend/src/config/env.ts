@@ -8,7 +8,11 @@ const envSchema = z.object({
   PUBLIC_BASE_URL: z.string().url().default("http://localhost:4000"),
   DATABASE_URL: z.string().optional(),
   GROQ_API_KEY: z.string().optional(),
-  GROQ_MODEL: z.string().default("llama-3.3-70b-versatile")
+  GROQ_MODEL: z.string().default("llama-3.3-70b-versatile"),
+  CLERK_PUBLISHABLE_KEY: z.string().min(1).optional(),
+  CLERK_SECRET_KEY: z.string().min(1).optional()
 });
 
 export const env = envSchema.parse(process.env);
+
+export const clerkConfigured = Boolean(env.CLERK_PUBLISHABLE_KEY && env.CLERK_SECRET_KEY);

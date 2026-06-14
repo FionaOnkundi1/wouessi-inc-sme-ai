@@ -85,6 +85,47 @@
   transition: background 0.15s, color 0.15s;
 }
 
+.saveBtn {
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: 1px solid #7c5cfa;
+  background: #5b3fe8;
+  color: #fff;
+  cursor: pointer;
+}
+
+.saveBtn:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.saveBtnDone {
+  border-color: #639922;
+  background: #466d19;
+}
+
+.saveMessage {
+  position: fixed;
+  top: 48px;
+  right: 16px;
+  z-index: 9999;
+  max-width: 360px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #edf8df;
+  color: #365314;
+  font: 500 12px/1.4 'Inter', sans-serif;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.16);
+}
+
+.saveMessageError {
+  background: #feeceb;
+  color: #9f1239;
+}
+
 .restartBtn:hover {
   background: rgba(255,255,255,0.15);
   color: #fff;
@@ -96,4 +137,39 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 760px) {
+  .editHint,
+  .seoPill {
+    display: none;
+  }
+
+  .bannerUrl {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .saveBtn,
+  .restartBtn {
+    padding: 5px 9px;
+  }
+}
+
+@media (max-width: 520px) {
+  .bannerLeft {
+    display: none;
+  }
+
+  .demoBanner {
+    justify-content: flex-end;
+  }
+
+  .saveMessage {
+    left: 12px;
+    right: 12px;
+    max-width: none;
+  }
 }

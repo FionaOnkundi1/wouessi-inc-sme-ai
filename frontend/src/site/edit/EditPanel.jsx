@@ -3,10 +3,12 @@ import { useState, useRef } from 'react'
 import { useSite } from '../SiteContext'
 import { regenerateSection } from './regenerateSection'
 import { isSpeechSupported, startSpeechSession } from '../../services/speechService'
+import { useWouessiAuth } from '../../auth/AuthContext'
 import styles from './EditPanel.module.css'
 
 export default function EditPanel() {
   const { data, editPanel, closeEdit, updateSection } = useSite()
+  const auth = useWouessiAuth()
   const [answers, setAnswers] = useState({})
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
@@ -75,7 +77,10 @@ export default function EditPanel() {
         .map((q) => `[${q.id}] ${answers[q.id].trim()}`)
         .join('\n')
 
-      const patch = await regenerateSection(sectionId, combined, data)
+      const patch = await regenerateSection(sectionId, combined, data, {
+        getToken: auth.isSignedIn ? auth.getToken : null,
+        claimToken: data.claimToken,
+      })
       updateSection(patch)
       setDone(true)
       setTimeout(() => {

@@ -44,6 +44,7 @@ export const publishSiteRequestSchema = z.object({
 });
 
 export const regenerateSectionRequestSchema = z.object({
+  siteId: z.string().uuid(),
   sectionId: z.enum([
     "hero",
     "features",

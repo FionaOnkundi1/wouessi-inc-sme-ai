@@ -5,6 +5,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import multer from "multer";
 import { env } from "./config/env.js";
+import { applyAuthMiddleware } from "./middleware/auth.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFound } from "./middleware/notFound.js";
 import { apiRouter } from "./routes/index.js";
@@ -12,6 +13,7 @@ import { apiRouter } from "./routes/index.js";
 export function createApp() {
   const app = express();
 
+  applyAuthMiddleware(app);
   app.use(helmet());
   app.use(cors({ origin: env.FRONTEND_ORIGIN }));
   app.use(express.json({ limit: "1mb" }));
@@ -44,6 +46,7 @@ export function createApp() {
         "POST /api/regenerate-section",
         "POST /api/publish-site",
         "GET /api/sites/:siteId",
+        "POST /api/sites/:siteId/claim",
         "POST /api/transcribe",
         "POST /api/chat"
       ]

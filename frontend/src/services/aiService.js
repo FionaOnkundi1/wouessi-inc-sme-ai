@@ -2,7 +2,7 @@
 // Calls Stefan's backend API for business extraction and site generation.
 // Falls back to smart local extraction if the backend is unavailable.
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+import { apiRequest, readApiError } from './apiClient'
 
 // ─── Local fallback extraction (no backend required) ──────────────────────────
 // Kept as fallback in case Stefan's backend is down during demo
@@ -185,35 +185,34 @@ function mapBackendResponse(extractResult, siteResult) {
     styleTokens: siteResult.styleTokens,
     siteId: siteResult.siteId,
     sessionId: extractResult.sessionId,
+    claimToken: extractResult.claimToken || siteResult.claimToken || null,
   }
 }
 
 // ─── Backend API path ─────────────────────────────────────────────────────────
-async function backendExtract(conversationText) {
+async function backendExtract(conversationText, access) {
   // Step 1: Extract business data
-  const extractRes = await fetch(`${API_URL}/api/extract-business-data`, {
+  const extractRes = await apiRequest('/api/extract-business-data', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ conversationText })
-  })
+  }, access)
 
   if (!extractRes.ok) {
-    const err = await extractRes.json().catch(() => ({}))
-    throw new Error(err.message || 'Business extraction failed')
+    throw await readApiError(extractRes, 'Business extraction failed')
   }
 
   const extractResult = await extractRes.json()
 
   // Step 2: Generate the full site
-  const siteRes = await fetch(`${API_URL}/api/generate-site`, {
+  const siteRes = await apiRequest('/api/generate-site', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sessionId: extractResult.sessionId })
-  })
+  }, { ...access, claimToken: extractResult.claimToken || access.claimToken })
 
   if (!siteRes.ok) {
-    const err = await siteRes.json().catch(() => ({}))
-    throw new Error(err.message || 'Site generation failed')
+    throw await readApiError(siteRes, 'Site generation failed')
   }
 
   const siteResult = await siteRes.json()
@@ -223,9 +222,9 @@ async function backendExtract(conversationText) {
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
-export async function extractBusinessData(input) {
+export async function extractBusinessData(input, access = {}) {
   try {
-    return await backendExtract(input)
+    return await backendExtract(input, access)
   } catch (err) {
     console.warn('Backend unavailable, using local fallback:', err.message)
     return localExtract(input)
