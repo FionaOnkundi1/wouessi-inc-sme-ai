@@ -9,6 +9,13 @@ import { apiRequest, readApiError } from './apiClient'
 
 const CATEGORY_MAP = [
   {
+    keywords: ['plumb', 'electric', 'tradie', 'trade', 'install', 'wiring', 'pipe', 'blocked drain', 'burst pipe', 'hot water', 'build', 'construct'],
+    tag: 'Trade Services', emoji: ['🔧', '⚡', '🏗️'],
+    products: ['Emergency Call-Out', 'Installation Service', 'Maintenance Plan'],
+    prices: ['POA', 'POA', 'From $99/mo'], bgs: ['#faeeda', '#e6f1fb', '#eaf3de'],
+    unit: 'jobs/week',
+  },
+  {
     keywords: ['bake', 'bakery', 'bread', 'cake', 'pastry', 'cookie', 'dessert', 'sweet', 'croissant'],
     tag: 'Bakery', emoji: ['🍞', '🎂', '🍪'],
     products: ['Sourdough Loaf', 'Custom Cake', 'Cookie Box'],
@@ -49,13 +56,6 @@ const CATEGORY_MAP = [
     products: ['Haircut & Style', 'Colour Treatment', 'Full Package'],
     prices: ['$55', '$120', '$180'], bgs: ['#fbeaf0', '#e1f5ee', '#faeeda'],
     unit: 'clients/week',
-  },
-  {
-    keywords: ['plumb', 'electric', 'tradie', 'trade', 'install', 'wiring', 'pipe', 'build', 'construct'],
-    tag: 'Trade Services', emoji: ['🔧', '⚡', '🏗️'],
-    products: ['Emergency Call-Out', 'Installation Service', 'Maintenance Plan'],
-    prices: ['POA', 'POA', 'From $99/mo'], bgs: ['#faeeda', '#e6f1fb', '#eaf3de'],
-    unit: 'jobs/week',
   },
   {
     keywords: ['tutor', 'teach', 'lesson', 'class', 'coach', 'education', 'learn', 'train'],
@@ -136,11 +136,38 @@ function promptField(input, label) {
   return input.match(pattern)?.[1]?.trim() || ''
 }
 
+function extractSection(input, starts) {
+  for (const start of starts) {
+    const pattern = new RegExp(
+      `${start}\\s*(?::|is|are)?\\s+([\\s\\S]*?)(?=\\n|\\.\\s+(?:We complete|Our typical|Our customers|What makes|We want|The main goal|Contact|Phone|Opening hours|Open hours|Emergency call-outs|$)|$)`,
+      'i'
+    )
+    const value = input.match(pattern)?.[1]?.trim()
+    if (value) return value
+  }
+  return ''
+}
+
 function parseContact(input) {
   const contact = promptField(input, 'Contact') || input
   const email = contact.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || ''
   const phone = contact.match(/(?:\+\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s-]?){2,5}\d{2,4}/)?.[0]?.trim() || ''
   return { email, phone }
+}
+
+function parseOpenHours(input) {
+  const source = [
+    promptField(input, 'Contact'),
+    extractSection(input, ['opening hours', 'open hours', 'hours']),
+    input,
+  ].filter(Boolean).join('. ')
+  const labelled = source.match(/(?:opening hours|open hours|hours)\s*(?::|are|is)?\s*([^.;]+(?:[.;]\s*[^.;]*(?:after hours|emergency)[^.;]*)?)/i)?.[1]
+  const dayPattern = source.match(/((?:mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday)[^.;]*(?:am|pm)[^.;]*(?:after hours|emergency[^.;]*)?)/i)?.[1]
+  return cleanOpenHours(labelled || dayPattern || '')
+}
+
+function cleanOpenHours(value) {
+  return value.replace(/^(?:are|is|:|-)\s+/i, '').trim()
 }
 
 function parseOfferings(input, cat) {
@@ -150,7 +177,7 @@ function parseOfferings(input, cat) {
     .split(/,|\n| and /)
     .map((item) => item.trim())
     .filter(Boolean)
-    .slice(0, 3)
+    .slice(0, 6)
 
   while (names.length < 3) names.push(cat.products[names.length] || DEFAULT_CATEGORY.products[names.length])
 
@@ -170,7 +197,16 @@ function parseOfferings(input, cat) {
 }
 
 function inferProductsFromHomepage(input) {
-  return input.match(/(?:sell|offer|provide|make|repair|serve|do)\s+([^,.]+)/i)?.[1]?.trim() || ''
+  return extractSection(input, [
+    'we provide',
+    'we offer',
+    'i provide',
+    'i offer',
+    'we sell',
+    'i sell',
+    'we do',
+    'i do',
+  ]) || input.match(/(?:sell|offer|provide|make|repair|serve|do)\s+([^,.]+)/i)?.[1]?.trim() || ''
 }
 
 function localExtract(input) {
@@ -181,9 +217,14 @@ function localExtract(input) {
   const volume = extractVolume(input)
   const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
   const products = parseOfferings(input, cat)
-  const targetCustomers = promptField(input, 'Target customer') || 'local customers'
-  const uniqueSellingPoint = promptField(input, 'What makes us different') || 'quality, consistency, and personal service'
+  const targetCustomers = promptField(input, 'Target customer')
+    || extractSection(input, ['typical customers', 'customers are', 'customers'])
+    || 'local customers'
+  const uniqueSellingPoint = promptField(input, 'What makes us different')
+    || extractSection(input, ['what makes us different', 'different is', 'choose us because'])
+    || 'quality, consistency, and personal service'
   const { email, phone } = parseContact(input)
+  const openHours = parseOpenHours(input)
 
   return {
     name,
@@ -203,6 +244,7 @@ function localExtract(input) {
     uniqueSellingPoint,
     contactEmail: email,
     contactPhone: phone,
+    openHours,
     footerYear: String(new Date().getFullYear()),
   }
 }
@@ -214,6 +256,8 @@ function localExtract(input) {
 function mapBackendResponse(extractResult, siteResult) {
   const sc = siteResult.siteContent
   const bd = extractResult.businessData
+
+  const contactHint = bd.contactHint || ''
 
   return {
     // Core site content from Stefan's siteBuilder
@@ -236,9 +280,9 @@ function mapBackendResponse(extractResult, siteResult) {
     about: sc.about || bd.uniqueSellingPoint || '',
     targetCustomers: sc.targetCustomers || bd.targetCustomers || '',
     uniqueSellingPoint: sc.uniqueSellingPoint || bd.uniqueSellingPoint || '',
-    contactEmail: sc.contactEmail || bd.contactEmail || bd.contactHint?.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || '',
-    contactPhone: sc.contactPhone || bd.contactPhone || bd.contactHint?.match(/(?:\+\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s-]?){2,5}\d{2,4}/)?.[0]?.trim() || '',
-    openHours: sc.openHours || bd.openHours || '',
+    contactEmail: sc.contactEmail || bd.contactEmail || contactHint.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || '',
+    contactPhone: sc.contactPhone || bd.contactPhone || contactHint.match(/(?:\+\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s-]?){2,5}\d{2,4}/)?.[0]?.trim() || '',
+    openHours: sc.openHours || bd.openHours || parseOpenHours(contactHint) || '',
     footerYear: sc.footerYear || String(new Date().getFullYear()),
 
     // Extra fields Div's site uses

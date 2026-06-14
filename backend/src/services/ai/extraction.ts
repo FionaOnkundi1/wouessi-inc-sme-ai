@@ -66,10 +66,17 @@ export function buildFallbackBusinessData(conversationText: string): BusinessDat
   const businessName = inferBusinessName(conversationText, businessType);
   const productsOrServices = inferProductsOrServices(conversationText, businessType);
   const targetCustomers = promptField(conversationText, "Target customer")
+    || extractSection(conversationText, ["typical customers", "customers are", "customers"])
     || "Local customers looking for reliable small business services";
   const uniqueSellingPoint = promptField(conversationText, "What makes us different")
+    || extractSection(conversationText, ["what makes us different", "different is", "choose us because"])
     || "Quality service, personal attention, and fast communication";
-  const contactHint = promptField(conversationText, "Contact") || "";
+  const contactHint = [
+    promptField(conversationText, "Contact"),
+    extractSection(conversationText, ["contact email", "email"]),
+    extractSection(conversationText, ["phone"]),
+    extractSection(conversationText, ["opening hours", "open hours", "hours"])
+  ].filter(Boolean).join(". ");
   const websiteVibe = inferVibe(lower);
 
   return {
@@ -91,14 +98,14 @@ export function buildFallbackBusinessData(conversationText: string): BusinessDat
 }
 
 function inferBusinessType(lower: string): string {
+  if (lower.includes("plumb") || lower.includes("electric") || lower.includes("trade") || lower.includes("burst pipe") || lower.includes("blocked drain")) return "Trade Services";
+  if (lower.includes("clean")) return "Cleaning Services";
   if (lower.includes("bake") || lower.includes("bakery") || lower.includes("cake") || lower.includes("bread") || lower.includes("croissant")) return "Bakery";
   if (lower.includes("candle")) return "Handmade Goods";
   if (lower.includes("tailor") || lower.includes("alteration")) return "Fashion & Tailoring";
   if (lower.includes("vegetable") || lower.includes("fruit") || lower.includes("organic")) return "Organic Food";
   if (lower.includes("phone") || lower.includes("repair")) return "Tech Repair";
   if (lower.includes("hair") || lower.includes("beauty") || lower.includes("salon")) return "Beauty & Wellness";
-  if (lower.includes("plumb") || lower.includes("electric") || lower.includes("trade")) return "Trade Services";
-  if (lower.includes("clean")) return "Cleaning Services";
   return "Small Business";
 }
 
@@ -106,8 +113,18 @@ function inferProductsOrServices(text: string, businessType: string): string {
   const productsAnswer = promptField(text, "Products/services");
   if (productsAnswer) return productsAnswer;
 
-  const afterOffer = text.match(/(?:sell|offer|provide|do|make|repair)\s+([^,.]+)/i);
-  if (afterOffer?.[1]) return afterOffer[1].trim();
+  const detailedOffer = extractSection(text, [
+    "we provide",
+    "we offer",
+    "i provide",
+    "i offer",
+    "we sell",
+    "i sell",
+    "we do",
+    "i do"
+  ]);
+  if (detailedOffer) return detailedOffer;
+
   return businessType === "Small Business" ? "Products and services" : businessType;
 }
 
@@ -140,6 +157,19 @@ function promptField(text: string, label: string): string {
     new RegExp(`${escaped}:\\s*([\\s\\S]*?)(?=\\.\\s*(?:Products\\/services|Target customer|What makes us different|Contact):|$)`, "i")
   );
   return match?.[1]?.trim() || "";
+}
+
+function extractSection(text: string, starts: string[]): string {
+  for (const start of starts) {
+    const pattern = new RegExp(
+      `${start}\\s*(?::|is|are)?\\s+([\\s\\S]*?)(?=\\n|\\.\\s+(?:We complete|Our typical|Our customers|What makes|We want|The main goal|Contact|Phone|Opening hours|Open hours|Emergency call-outs|$)|$)`,
+      "i"
+    );
+    const match = text.match(pattern);
+    const value = match?.[1]?.trim();
+    if (value) return value;
+  }
+  return "";
 }
 
 function cleanLocation(value: string): string {

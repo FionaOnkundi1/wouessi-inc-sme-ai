@@ -13,6 +13,8 @@ function getPageCopy(tag) {
 }
 
 function extendProducts(products, tag) {
+  if (products.length >= 6) return products
+
   const isService = /service|repair|clean|salon|tailor|tutor|coach/i.test(tag)
   const extras = isService
     ? [
@@ -25,7 +27,7 @@ function extendProducts(products, tag) {
         { name: 'Bulk / Wholesale', price: 'Contact us', emoji: '📦', bg: '#e6f1fb', badge: 'Trade' },
         { name: 'Gift Voucher', price: 'From $20', emoji: '🎁', bg: '#eaf3de', badge: 'Gift' },
       ]
-  return [...products, ...extras]
+  return [...products, ...extras].slice(0, 6)
 }
 
 export default function ProductsPage() {
